@@ -1,9 +1,8 @@
 export default function Dashboard() {
 
-
     return (
-        <div className="text-white" style={{ padding: '20px', color: '#fff' }}>
-            <h1>Invoices</h1>
+        <div className="border-2 border-black w-[70%] ">
+            <h1 className="text-blue-600 text-4xl font-bold  underline">Invoices</h1>
             <p>This is the main list view.</p>
         </div>
 

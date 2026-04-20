@@ -1,18 +1,17 @@
 import { Outlet } from 'react-router-dom';
+import Sidebar from './components/sideBar';
 
 
 function App() {
 
   return (
-    <div className="app-shell">
+    <div className="flex h-screen w-screen">
       {/* This is where your Sidebar/Nav will go later */}
-      <nav style={{ padding: '20px', background: '#eee' }}>
-        Sidebar / Navigation Placeholder
-      </nav>
-
-      <main>
-
-        <Outlet />
+      <Sidebar />
+      <main className="flex-1 h-screen border-2 border-black pl-[7%] overflow-x-hidden">
+        <section className='h-screen border-2 border-red-500 flex  justify-center'>
+          <Outlet />
+        </section>
       </main>
     </div>
   );

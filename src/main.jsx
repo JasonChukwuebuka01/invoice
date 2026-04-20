@@ -5,6 +5,7 @@ import App from './App.jsx';
 import Dashboard from './pages/dashboard.jsx';
 import InvoiceDetails from './pages/invoiceDetail.jsx';
 import './index.css';
+import { ThemeProvider } from './context/themeContext.jsx';
 
 const router = createBrowserRouter([
   {
