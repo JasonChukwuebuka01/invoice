@@ -12,7 +12,7 @@ function App() {
       {/* This is where your Sidebar/Nav will go later */}
       <Sidebar />
       <main className="flex-1 h-screen bg-[#141625] p-3 lg:pl-[7%] overflow-x-hidden">
-        <section className='h-screen flex  justify-center pt-[5%] lg:pt-[5%]'>
+        <section className='h-screen flex  justify-center pt-[10%] lg:pt-[5%]'>
           <Outlet />
         </section>
       </main>
