@@ -2,10 +2,11 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
-import Dashboard from './pages/dashboard.jsx';
+import Invoice from './pages/Invoice.jsx';
 import InvoiceDetails from './pages/invoiceDetail.jsx';
 import './index.css';
 import { ThemeProvider } from './context/themeContext.jsx';
+
 
 const router = createBrowserRouter([
   {
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Dashboard />,
+        element: <Invoice />,
       },
       {
         path: "invoice/:id",

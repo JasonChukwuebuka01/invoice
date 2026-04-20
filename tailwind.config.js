@@ -18,6 +18,7 @@ export default {
                 'status-paid': '#33D69F',
                 'status-pending': '#FF8F00',
                 'status-draft': '#373B53',
+                'pages-color': '#141625',
             },
             fontFamily: {
                 spartan: ['League Spartan', 'sans-serif'],

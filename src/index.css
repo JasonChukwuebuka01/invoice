@@ -15,10 +15,10 @@
   --color-status-paid: #33D69F;
   --color-status-pending: #FF8F00;
   --color-status-draft: #373B53;
-  
   --font-spartan: "League Spartan", sans-serif;
 }
 
 body {
   @apply font-spartan transition-colors duration-300;
 }
+

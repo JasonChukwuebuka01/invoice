@@ -6,6 +6,8 @@ export const ThemeProvider = ({ children }) => {
 
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
+    const [toggleHamburger, setToggleHamburger] = useState(false);
+
     useEffect(() => {
 
         document.documentElement.className = theme;
@@ -16,8 +18,12 @@ export const ThemeProvider = ({ children }) => {
         setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
     };
 
+    const toggleHambugerMenu = (value) => {
+        setToggleHamburger(value)
+    };
+
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, toggleTheme, toggleHambugerMenu, toggleHamburger }}>
             {children}
         </ThemeContext.Provider>
     );
