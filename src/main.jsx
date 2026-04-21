@@ -8,6 +8,7 @@ import './index.css';
 import { ThemeProvider } from './context/themeContext.jsx';
 
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -24,6 +25,9 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
