@@ -1,9 +1,10 @@
+import React, { forwardRef } from 'react';
 
-export default function InvoiceItemInput({ item, index, handleItemChange, removeItem, errors }) {
+
+
+
+const InvoiceItemInput = forwardRef(({ item, index, handleItemChange, removeItem, errors }, ref) => {
     const total = (item.qty || 0) * (item.price || 0);
-
-
-
 
     return (
         <fieldset className="grid grid-cols-3 sm:grid-cols-[2fr_1fr_1.5fr_1fr_auto] gap-x-4 gap-y-6 sm:gap-4 items-end mb-12 sm:mb-4 animate-in fade-in duration-300">
@@ -17,6 +18,7 @@ export default function InvoiceItemInput({ item, index, handleItemChange, remove
                     {errors?.name && <span className="text-red-500 text-[10px] font-semibold sm:hidden">{errors.name}</span>}
                 </div>
                 <input
+                    ref={ref} // Attached ref here for auto-focus
                     name="name"
                     value={item.name}
                     onChange={(e) => handleItemChange(index, e)}
@@ -78,4 +80,6 @@ export default function InvoiceItemInput({ item, index, handleItemChange, remove
             </div>
         </fieldset>
     );
-}
+});
+
+export default InvoiceItemInput;

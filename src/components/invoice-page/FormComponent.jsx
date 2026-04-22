@@ -4,12 +4,7 @@ import { FormInput } from '../helper/FormInput';
 import { CustomSelect } from '../helper/CustomSelect';
 import { useInvoices } from '../../context/InvoiceContext';
 
-
-
-
-
 const FormComponent = ({ setIsFormOpen }) => {
-
     const { addInvoice } = useInvoices();
 
     const [formData, setFormData] = useState({
@@ -22,19 +17,30 @@ const FormComponent = ({ setIsFormOpen }) => {
 
     const [errors, setErrors] = useState({});
     const [number, setNumber] = useState(0);
-    const addItemBtnRef = useRef(null);
+    const [lastAddedItemId, setLastAddedItemId] = useState(null);
 
+    const addItemBtnRef = useRef(null); // This is your scroll container
+    const newItemRef = useRef(null);   // This is the auto-focus target
 
-
+    // Handle Scroll + Focus Logic
     useEffect(() => {
-        if (formData.items.length > 1 && addItemBtnRef.current) {
-            addItemBtnRef.current.scrollTo({ top: addItemBtnRef.current.scrollHeight, behavior: 'smooth' });
+        if (number > 0 && addItemBtnRef.current) {
+            // 1. Scroll to the bottom of the container
+            addItemBtnRef.current.scrollTo({
+                top: addItemBtnRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+
+            // 2. Focus the input after scroll finishes
+            const focusTimeout = setTimeout(() => {
+                if (newItemRef.current) {
+                    newItemRef.current.focus();
+                }
+            }, 100);
+
+            return () => clearTimeout(focusTimeout);
         }
-    }, [number]); // Scrolls to the bottom of the items list whenever a new item is added
-
-
-
-
+    }, [number, lastAddedItemId]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -42,11 +48,24 @@ const FormComponent = ({ setIsFormOpen }) => {
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
     };
 
+    const handleItemChange = (idx, e) => {
+        const { name, value } = e.target;
+        const newItems = [...formData.items];
+        newItems[idx] = { ...newItems[idx], [name]: name === 'name' ? value : Number(value) };
+        setFormData(prev => ({ ...prev, items: newItems }));
+    };
 
-
+    const handleNewItemButtonClick = () => {
+        const newId = Date.now();
+        setNumber(prev => prev + 1);
+        setLastAddedItemId(newId);
+        setFormData(prev => ({
+            ...prev,
+            items: [...prev.items, { id: newId, name: '', qty: 1, price: 0 }]
+        }));
+    };
 
     const validateForm = () => {
-
         let newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const fields = [
@@ -85,17 +104,10 @@ const FormComponent = ({ setIsFormOpen }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-
-
-    // Calculation Helper for Totals
     const calculateTotal = () => {
         return formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
     };
 
-
-
-
-    //  Handle Save & Send (Pending)
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
@@ -109,10 +121,6 @@ const FormComponent = ({ setIsFormOpen }) => {
         }
     };
 
-
-
-
-    // Handle Save as Draft (No validation required)
     const handleSaveDraft = () => {
         const finalData = {
             ...formData,
@@ -123,34 +131,11 @@ const FormComponent = ({ setIsFormOpen }) => {
         setIsFormOpen(false);
     };
 
-
-
-    const handleItemChange = (idx, e) => {
-        const { name, value } = e.target;
-        const newItems = [...formData.items];
-        newItems[idx] = { ...newItems[idx], [name]: name === 'name' ? value : Number(value) };
-        setFormData(prev => ({ ...prev, items: newItems }));
-    };
-
-
-
-
-    const handleNewItemButtonClick = () => {
-        setNumber(prev => prev + 1);
-        setFormData(prev => ({
-            ...prev,
-            items: [...prev.items, { id: Date.now(), name: '', qty: 1, price: 0 }]
-        }))
-    };
-
-
-
-
     return (
         <div className="relative flex flex-col h-full -m-8 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]">
             <div ref={addItemBtnRef} className="flex-1 overflow-y-auto p-8 md:p-14 custom-scrollbar">
                 <form className="flex flex-col gap-12 pb-32">
-                    {/* ... Fieldsets stay exactly the same as your original code ... */}
+                    {/* Bill From */}
                     <fieldset className="flex flex-col gap-6">
                         <legend className="text-purple-main font-bold text-[13px] mb-6">Bill From</legend>
                         <FormInput label="Street Address" name="senderStreet" value={formData.senderStreet} error={errors.senderStreet} onChange={handleInputChange} />
@@ -161,6 +146,7 @@ const FormComponent = ({ setIsFormOpen }) => {
                         </div>
                     </fieldset>
 
+                    {/* Bill To */}
                     <fieldset className="flex flex-col gap-6">
                         <legend className="text-purple-main font-bold text-[13px]">Bill To</legend>
                         <FormInput label="Client's Name" name="clientName" value={formData.clientName} error={errors.clientName} onChange={handleInputChange} />
@@ -173,6 +159,7 @@ const FormComponent = ({ setIsFormOpen }) => {
                         </div>
                     </fieldset>
 
+                    {/* Dates/Terms */}
                     <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                         <FormInput label="Invoice Date" name="invoiceDate" type="date" value={formData.invoiceDate} error={errors.invoiceDate} onChange={handleInputChange} />
                         <div className="flex flex-col gap-2 relative">
@@ -194,11 +181,13 @@ const FormComponent = ({ setIsFormOpen }) => {
                         <FormInput label="Project Description" name="projectDescription" placeholder="e.g. Graphic Design Service" value={formData.projectDescription} error={errors.projectDescription} onChange={handleInputChange} gridClass="md:col-span-2" />
                     </fieldset>
 
+                    {/* Item List */}
                     <fieldset className="flex flex-col gap-4">
                         <h3 className="text-xl font-bold text-[#777F98] dark:text-white tracking-tight mb-4">Item List</h3>
                         {formData.items.map((item, index) => (
                             <InvoiceItemInput
                                 key={item.id}
+                                ref={item.id === lastAddedItemId ? newItemRef : null}
                                 item={item}
                                 index={index}
                                 errors={errors.itemErrors?.[index]}
@@ -208,7 +197,7 @@ const FormComponent = ({ setIsFormOpen }) => {
                         ))}
                         <button
                             type="button"
-                            onClick={() => handleNewItemButtonClick()}
+                            onClick={handleNewItemButtonClick}
                             className="w-full py-4 rounded-full bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] font-bold text-[13px] transition-all mt-4 hover:bg-[#DFE3FA] dark:hover:bg-white dark:hover:text-[#7E88C3]"
                         >
                             + Add New Item
@@ -217,35 +206,16 @@ const FormComponent = ({ setIsFormOpen }) => {
                 </form>
             </div>
 
+            {/* Footer Buttons */}
             <div className="fixed bottom-0 w-full p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]">
-                <button
-                    type="button"
-                    onClick={() => setIsFormOpen(false)}
-                    className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#DFE3FA] dark:hover:bg-white dark:hover:text-[#7E88C3] transition-all"
-                >
-                    Discard
-                </button>
+                <button type="button" onClick={() => setIsFormOpen(false)} className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#DFE3FA] transition-all">Discard</button>
                 <div className="flex gap-2">
-                    <button
-                        type="button"
-                        onClick={handleSaveDraft}
-                        className="bg-[#373B53] text-[#888EB0] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#0C0E17] dark:hover:bg-[#1E2139] transition-all"
-                    >
-                        Save as Draft
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleSubmit}
-                        className="bg-purple-main text-white px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-purple-hover transition-all shadow-lg shadow-purple-main/20"
-                    >
-                        Save & Send
-                    </button>
+                    <button type="button" onClick={handleSaveDraft} className="bg-[#373B53] text-[#888EB0] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#0C0E17] transition-all">Save as Draft</button>
+                    <button type="button" onClick={handleSubmit} className="bg-purple-main text-white px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-purple-hover transition-all">Save & Send</button>
                 </div>
             </div>
         </div>
     );
 };
-
-
 
 export default FormComponent;
