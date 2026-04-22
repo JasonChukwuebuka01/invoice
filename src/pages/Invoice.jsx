@@ -28,7 +28,7 @@ export default function Invoice() {
 
             <main>
                 {filteredInvoices.length === 0 ? (
-                    <EmptyState />
+                    <EmptyState   />
                 ) : (
                     <section aria-label="Invoice list">
                         {filteredInvoices.map(invoice => (

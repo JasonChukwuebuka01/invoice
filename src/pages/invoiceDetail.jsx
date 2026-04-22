@@ -1,43 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useInvoices } from '../context/InvoiceContext';
+import EmptyState from '../components/invoice-page/EmptyState';
 import InvoiceItemRow from '../components/invoice/id/InvoiceItemRow';
 import EditInvoiceForm from '../components/invoice/id/EditInvoiceForm';
 import DeleteModal from '../components/invoice/id/DeleteModal';
 
 export default function InvoiceDetails() {
+
   const { id } = useParams();
   const navigate = useNavigate();
+  const { invoices, deleteInvoice, markAsPaid } = useInvoices();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [invoiceData, setInvoiceData] = useState(null);
 
-  useEffect(() => {
-    const mockData = {
-      id: 'XM9141',
-      senderStreet: '19 Union Terrace', senderCity: 'London', senderPostCode: 'E1 3EZ', senderCountry: 'United Kingdom',
-      clientName: 'Alex Grim', clientEmail: 'alexgrim@mail.com', clientStreet: '84 Church Way',
-      clientCity: 'Bradford', clientPostCode: 'BD1 9PB', clientCountry: 'United Kingdom',
-      invoiceDate: '21 Aug 2021', paymentTerms: '30', projectDescription: 'Graphic Design',
-      items: [
-        { id: 1, name: 'Banner Design', qty: 1, price: 156.00 },
-        { id: 2, name: 'Email Design', qty: 2, price: 200.00 }
-      ]
-    };
-    setInvoiceData(mockData);
-  }, [id]);
 
+
+  // Find the specific invoice from global state
+  const invoiceData = invoices.find(inv => inv.id === id);
+
+
+
+
+  // Action Handlers
   const handleDelete = () => {
+    deleteInvoice(id);
     setIsDeleteModalOpen(false);
     navigate('/');
   };
 
-  if (!invoiceData) return <div className="p-10 text-white text-center">Loading...</div>;
+
+
+  const handleMarkAsPaid = () => {
+    markAsPaid(id);
+  };
+
+
+
+
+  if (!invoiceData) {
+    return (
+     <EmptyState showReset={true} />
+    );
+  }
+
+
+
+
+  // Dynamic Status Color Logic
+  const statusColors = {
+    paid: { bg: 'rgba(51, 214, 159, 0.06)', text: '#33D69F' },
+    pending: { bg: 'rgba(255, 143, 0, 0.06)', text: '#FF8F00' },
+    draft: { bg: 'rgba(55, 59, 83, 0.06)', text: '#373B53' }
+  };
+  const currentStatus = statusColors[invoiceData.status] || statusColors.draft;
 
   return (
-    /* FIX 1: Reduced px-4 to px-2 on mobile. 
-       This allows the invoice to spread across the screen like in your Figma screenshot.
-    */
-    <main className="min-h-screen bg-[#f8f8fb] dark:bg-[#141625] pt-[25%]  sm:pt-[12%] lg:pt-[4%] pb-32 px-2  lg:px-[20%] transition-colors duration-300 relative">
+    <main className="min-h-screen bg-[#f8f8fb] dark:bg-[#141625] pt-[25%] sm:pt-[12%] lg:pt-[4%] pb-32 px-2 lg:px-[20%] transition-colors duration-300 relative">
 
       <DeleteModal
         isOpen={isDeleteModalOpen}
@@ -48,7 +67,6 @@ export default function InvoiceDetails() {
 
       <EditInvoiceForm isOpen={isEditOpen} setIsOpen={setIsEditOpen} initialData={invoiceData} />
 
-      {/* Margins adjusted to align with the new tighter padding */}
       <Link to="/" className="flex items-center gap-6 mb-8 ml-2 group w-fit">
         <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg">
           <path d="M6.342.886L2.114 5.114l4.228 4.228" stroke="#9277FF" strokeWidth="2" fill="none" />
@@ -58,16 +76,19 @@ export default function InvoiceDetails() {
         </span>
       </Link>
 
-      {/* Header Action Bar - Tightened p-4 on mobile */}
       <header className="bg-white dark:bg-[#1E2139] p-4 md:px-8 md:py-6 rounded-lg flex items-center justify-between shadow-sm mb-4 md:mb-6">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-5">
           <span className="text-[#858BB2] dark:text-[#DFE3FA] text-[13px]">Status</span>
-          <div className="status-pill flex items-center justify-center gap-2 w-[104px] h-10 rounded-md bg-[rgba(255,143,0,0.06)] text-[#FF8F00] font-bold text-[15px]">
-            <span className="w-2 h-2 rounded-full bg-[#FF8F00]"></span>
-            Pending
+          <div
+            className="status-pill flex items-center justify-center gap-2 w-[104px] h-10 rounded-md font-bold text-[15px] capitalize"
+            style={{ backgroundColor: currentStatus.bg, color: currentStatus.text }}
+          >
+            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: currentStatus.text }}></span>
+            {invoiceData.status}
           </div>
         </div>
 
+        {/* Desktop Buttons */}
         <div className="hidden md:flex gap-2">
           <button onClick={() => setIsEditOpen(true)} className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#DFE3FA] dark:hover:bg-white dark:hover:text-[#7E88C3] transition-all">
             Edit
@@ -75,15 +96,15 @@ export default function InvoiceDetails() {
           <button onClick={() => setIsDeleteModalOpen(true)} className="bg-[#EC5757] text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#FF9797] transition-all">
             Delete
           </button>
-          <button className="bg-[#7C5DFA] text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#9277FF] transition-all">
-            Mark as Paid
-          </button>
+          {/* Rule: Only show/enable if Pending */}
+          {invoiceData.status === 'pending' && (
+            <button onClick={handleMarkAsPaid} className="bg-[#7C5DFA] text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#9277FF] transition-all">
+              Mark as Paid
+            </button>
+          )}
         </div>
       </header>
 
-      {/* FIX 2: Main Invoice Body - Changed p-6 to p-4 on mobile.
-          This stops the "shrunk" look by giving the actual content 33% more horizontal room.
-      */}
       <article className="bg-white dark:bg-[#1E2139] p-4 md:p-12 rounded-lg shadow-sm">
         <section className="flex flex-col md:flex-row justify-between gap-8 mb-10 md:mb-12">
           <div>
@@ -100,7 +121,6 @@ export default function InvoiceDetails() {
           </address>
         </section>
 
-        {/* 3-Column Info Grid */}
         <section className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-10 md:mb-12">
           <div className="flex flex-col gap-8">
             <div>
@@ -109,7 +129,7 @@ export default function InvoiceDetails() {
             </div>
             <div>
               <h3 className="text-[#7E88C3] dark:text-[#DFE3FA] text-[13px] mb-3">Payment Due</h3>
-              <p className="text-[#0C0E17] dark:text-white font-bold text-[15px] md:text-[19px]">20 Sep 2021</p>
+              <p className="text-[#0C0E17] dark:text-white font-bold text-[15px] md:text-[19px]">{invoiceData.paymentTerms || 'N/A'}</p>
             </div>
           </div>
 
@@ -130,9 +150,6 @@ export default function InvoiceDetails() {
           </div>
         </section>
 
-        {/* FIX 3: Table Section - Reduced mobile padding to p-4.
-            The items will now span wider, matching the Figma header/footer alignment.
-        */}
         <section className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-4 md:p-8">
           <div className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr] mb-8 text-[#7E88C3] dark:text-[#DFE3FA] text-[13px]">
             <span>Item Name</span>
@@ -150,7 +167,9 @@ export default function InvoiceDetails() {
 
         <footer className="bg-[#373B53] dark:bg-[#0C0E17] p-6 md:px-8 flex items-center justify-between rounded-b-lg">
           <span className="text-white text-[13px]">Amount Due</span>
-          <span className="text-white font-bold text-[20px] md:text-[24px]">£ 556.00</span>
+          <span className="text-white font-bold text-[20px] md:text-[24px]">
+            £ {invoiceData.total?.toLocaleString() || '0.00'}
+          </span>
         </footer>
       </article>
 
@@ -162,9 +181,11 @@ export default function InvoiceDetails() {
         <button onClick={() => setIsDeleteModalOpen(true)} className="flex-1 bg-[#EC5757] text-white py-4 rounded-full font-bold text-[13px]">
           Delete
         </button>
-        <button className="flex-1 bg-[#7C5DFA] text-white py-4 rounded-full font-bold text-[13px]">
-          Paid
-        </button>
+        {invoiceData.status === 'pending' && (
+          <button onClick={handleMarkAsPaid} className="flex-1 bg-[#7C5DFA] text-white py-4 rounded-full font-bold text-[13px]">
+            Paid
+          </button>
+        )}
       </footer>
     </main>
   );

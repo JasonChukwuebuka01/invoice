@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+
+
 const InvoiceContext = createContext();
 
 
@@ -46,7 +48,6 @@ export const InvoiceProvider = ({ children }) => {
 
 
 
-    //  Add New Invoice Function
     const addInvoice = (newInvoice) => {
         const invoiceWithId = {
             ...newInvoice,
@@ -58,8 +59,28 @@ export const InvoiceProvider = ({ children }) => {
 
 
 
+
+    const deleteInvoice = (id) => {
+        setInvoices((prev) => prev.filter(inv => inv.id !== id));
+    };
+
+
+
+
+    const markAsPaid = (id) => {
+        setInvoices((prev) => prev.map(inv => {
+            // Rule: Only Pending can be marked as Paid
+            if (inv.id === id && inv.status === 'pending') {
+                return { ...inv, status: 'paid' };
+            }
+            return inv;
+        }));
+    };
+
+
+
     return (
-        <InvoiceContext.Provider value={{ invoices, addInvoice }}>
+        <InvoiceContext.Provider value={{ invoices, addInvoice, deleteInvoice, markAsPaid }}>
             {children}
         </InvoiceContext.Provider>
     );
