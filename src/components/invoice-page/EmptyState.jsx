@@ -6,7 +6,7 @@ export default function EmptyState({ showReset = false }) {
 
   
   return (
-    <section className="flex flex-col items-center justify-center mt-12 lg:mt-24 text-center animate-fadeIn">
+    <section className="flex flex-col items-center justify-center mt-24 lg:mt-24 text-center animate-fadeIn">
       <img
         src={invoiceLogo}
         alt="No invoices found"

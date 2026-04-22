@@ -19,7 +19,7 @@ export default function Invoice() {
            In Light mode: #F8F8FB | In Dark mode: #141625
         */
         <div className="min-h-screen w-full bg-[#F8F8FB] dark:bg-[#141625] transition-colors duration-300">
-            <div className="w-full max-w-[730px] mx-auto pb-4 pt-[72px] md:pt-[80px] lg:pt-[72px] px-6">
+            <div className="w-full max-w-[730px] mx-auto pb-4 pt-[99px] md:pt-[80px] lg:pt-[72px] px-6">
 
                 {/* The Header contains the "Invoices" title which needs to change color */}
                 <InvoiceHeader count={filteredInvoices.length} />
