@@ -2,8 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import InvoiceItemInput from './InvoiceItemInput';
 import { FormInput } from '../helper/FormInput';
 import { CustomSelect } from '../helper/CustomSelect';
+import { useInvoices } from '../../context/InvoiceContext';
+
+
+
+
 
 const FormComponent = ({ setIsFormOpen }) => {
+
+    const { addInvoice } = useInvoices();
+
     const [formData, setFormData] = useState({
         senderStreet: '', senderCity: '', senderPostCode: '', senderCountry: '',
         clientName: '', clientEmail: '', clientStreet: '', clientCity: '',
@@ -18,12 +26,12 @@ const FormComponent = ({ setIsFormOpen }) => {
 
 
 
-
     useEffect(() => {
         if (formData.items.length > 1 && addItemBtnRef.current) {
             addItemBtnRef.current.scrollTo({ top: addItemBtnRef.current.scrollHeight, behavior: 'smooth' });
         }
-    }, [number]);//when user clicks add item button, number state changes and useEffect runs, scrolling to the bottom of the item list to show the newly added item input fields
+    }, [number]); // Scrolls to the bottom of the items list whenever a new item is added
+
 
 
 
@@ -38,6 +46,7 @@ const FormComponent = ({ setIsFormOpen }) => {
 
 
     const validateForm = () => {
+
         let newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const fields = [
@@ -78,16 +87,41 @@ const FormComponent = ({ setIsFormOpen }) => {
 
 
 
+    // Calculation Helper for Totals
+    const calculateTotal = () => {
+        return formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
+    };
 
 
-    const handleClick = (e) => {
+
+
+    //  Handle Save & Send (Pending)
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
+            const finalData = {
+                ...formData,
+                total: calculateTotal(),
+                status: 'pending'
+            };
+            addInvoice(finalData);
             setIsFormOpen(false);
         }
     };
 
 
+
+
+    // Handle Save as Draft (No validation required)
+    const handleSaveDraft = () => {
+        const finalData = {
+            ...formData,
+            total: calculateTotal(),
+            status: 'draft'
+        };
+        addInvoice(finalData);
+        setIsFormOpen(false);
+    };
 
 
 
@@ -99,14 +133,16 @@ const FormComponent = ({ setIsFormOpen }) => {
     };
 
 
+
+
     const handleNewItemButtonClick = () => {
         setNumber(prev => prev + 1);
         setFormData(prev => ({
             ...prev,
             items: [...prev.items, { id: Date.now(), name: '', qty: 1, price: 0 }]
         }))
+    };
 
-    }
 
 
 
@@ -114,6 +150,7 @@ const FormComponent = ({ setIsFormOpen }) => {
         <div className="relative flex flex-col h-full -m-8 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]">
             <div ref={addItemBtnRef} className="flex-1 overflow-y-auto p-8 md:p-14 custom-scrollbar">
                 <form className="flex flex-col gap-12 pb-32">
+                    {/* ... Fieldsets stay exactly the same as your original code ... */}
                     <fieldset className="flex flex-col gap-6">
                         <legend className="text-purple-main font-bold text-[13px] mb-6">Bill From</legend>
                         <FormInput label="Street Address" name="senderStreet" value={formData.senderStreet} error={errors.senderStreet} onChange={handleInputChange} />
@@ -169,7 +206,6 @@ const FormComponent = ({ setIsFormOpen }) => {
                                 removeItem={(idx) => setFormData(prev => ({ ...prev, items: prev.items.filter((_, i) => i !== idx) }))}
                             />
                         ))}
-                        {/* REFINED ADD ITEM BUTTON */}
                         <button
                             type="button"
                             onClick={() => handleNewItemButtonClick()}
@@ -177,17 +213,10 @@ const FormComponent = ({ setIsFormOpen }) => {
                         >
                             + Add New Item
                         </button>
-                        {(errors.items || errors.itemErrors) && (
-                            <div className="flex flex-col gap-1 mt-4">
-                                {errors.items && <p className="text-red-500 text-[10px] font-bold">- {errors.items}</p>}
-                                {errors.itemErrors && <p className="text-red-500 text-[10px] font-bold">- All item fields must be added</p>}
-                            </div>
-                        )}
                     </fieldset>
                 </form>
             </div>
 
-            {/* REFINED ACTION BAR BUTTONS */}
             <div className="fixed bottom-0 w-full p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]">
                 <button
                     type="button"
@@ -199,13 +228,14 @@ const FormComponent = ({ setIsFormOpen }) => {
                 <div className="flex gap-2">
                     <button
                         type="button"
+                        onClick={handleSaveDraft}
                         className="bg-[#373B53] text-[#888EB0] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#0C0E17] dark:hover:bg-[#1E2139] transition-all"
                     >
                         Save as Draft
                     </button>
                     <button
                         type="button"
-                        onClick={handleClick}
+                        onClick={handleSubmit}
                         className="bg-purple-main text-white px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-purple-hover transition-all shadow-lg shadow-purple-main/20"
                     >
                         Save & Send
@@ -214,6 +244,8 @@ const FormComponent = ({ setIsFormOpen }) => {
             </div>
         </div>
     );
-}
+};
+
+
 
 export default FormComponent;

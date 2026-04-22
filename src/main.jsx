@@ -6,6 +6,7 @@ import Invoice from './pages/Invoice.jsx';
 import InvoiceDetails from './pages/invoiceDetail.jsx';
 import './index.css';
 import { ThemeProvider } from './context/themeContext.jsx';
+import { InvoiceProvider } from './context/InvoiceContext.jsx';
 
 
 
@@ -32,7 +33,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <InvoiceProvider>
+        <RouterProvider router={router} />
+      </InvoiceProvider>
     </ThemeProvider>
   </StrictMode>
 );
