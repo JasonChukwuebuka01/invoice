@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useInvoices } from '../context/InvoiceContext';
 import EmptyState from '../components/invoice-page/EmptyState';
@@ -7,17 +7,28 @@ import EditInvoiceForm from '../components/invoice/id/EditInvoiceForm';
 import DeleteModal from '../components/invoice/id/DeleteModal';
 
 export default function InvoiceDetails() {
-
   const { id } = useParams();
   const navigate = useNavigate();
   const { invoices, deleteInvoice, markAsPaid } = useInvoices();
+
+  // Refs and State
+  const invoiceDetailsContainer = useRef(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-
+  const [scrollTrigger, setScrollTrigger] = useState(0);
 
   // Find the specific invoice from global state
   const invoiceData = invoices.find(inv => inv.id === id);
+
+
+
+
+  // Sync scroll between Side Panel and Parent Container
+  useEffect(() => {
+    if (scrollTrigger > 0) {
+      invoiceDetailsContainer.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [scrollTrigger]);
 
 
 
@@ -38,11 +49,11 @@ export default function InvoiceDetails() {
 
 
 
+
   if (!invoiceData) {
-    return (
-     <EmptyState showReset={true} />
-    );
-  }
+    return <EmptyState showReset={true} />;
+  };
+
 
 
 
@@ -53,11 +64,15 @@ export default function InvoiceDetails() {
     pending: { bg: 'rgba(255, 143, 0, 0.06)', text: '#FF8F00' },
     draft: { bg: 'rgba(55, 59, 83, 0.06)', text: '#373B53' }
   };
+
+
   const currentStatus = statusColors[invoiceData.status] || statusColors.draft;
 
   return (
-    <main className="min-h-screen bg-[#f8f8fb] dark:bg-[#141625] pt-[25%] sm:pt-[12%] lg:pt-[4%] pb-32 px-2 lg:px-[20%] transition-colors duration-300 relative">
 
+    <main
+      className="min-h-screen bg-[#f8f8fb] dark:bg-[#141625] pt-[25%] sm:pt-[12%] lg:pt-[4%] pb-32 px-2 lg:px-[20%] transition-colors duration-300 relative"
+    >
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -65,7 +80,12 @@ export default function InvoiceDetails() {
         invoiceId={invoiceData.id}
       />
 
-      <EditInvoiceForm isOpen={isEditOpen} setIsOpen={setIsEditOpen} initialData={invoiceData} />
+      <EditInvoiceForm
+        isOpen={isEditOpen}
+        setIsOpen={setIsEditOpen}
+        initialData={invoiceData}
+        onItemAdded={() => setScrollTrigger(prev => prev + 1)}
+      />
 
       <Link to="/" className="flex items-center gap-6 mb-8 ml-2 group w-fit">
         <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg">
@@ -96,7 +116,6 @@ export default function InvoiceDetails() {
           <button onClick={() => setIsDeleteModalOpen(true)} className="bg-[#EC5757] text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#FF9797] transition-all">
             Delete
           </button>
-          {/* Rule: Only show/enable if Pending */}
           {invoiceData.status === 'pending' && (
             <button onClick={handleMarkAsPaid} className="bg-[#7C5DFA] text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#9277FF] transition-all">
               Mark as Paid
@@ -105,7 +124,8 @@ export default function InvoiceDetails() {
         </div>
       </header>
 
-      <article className="bg-white dark:bg-[#1E2139] p-4 md:p-12 rounded-lg shadow-sm">
+      <article
+        className=" bg-white dark:bg-[#1E2139] p-4 md:p-12 rounded-lg shadow-sm">
         <section className="flex flex-col md:flex-row justify-between gap-8 mb-10 md:mb-12">
           <div>
             <h1 className="text-[#0C0E17] dark:text-white font-bold text-base md:text-[20px] mb-1 uppercase tracking-tight">
@@ -150,7 +170,9 @@ export default function InvoiceDetails() {
           </div>
         </section>
 
-        <section className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-4 md:p-8">
+        <section
+          ref={invoiceDetailsContainer}
+          className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-4 md:p-8">
           <div className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr] mb-8 text-[#7E88C3] dark:text-[#DFE3FA] text-[13px]">
             <span>Item Name</span>
             <span className="text-center">QTY.</span>
@@ -158,10 +180,14 @@ export default function InvoiceDetails() {
             <span className="text-right">Total</span>
           </div>
 
-          <ul className="flex flex-col gap-6 md:gap-8">
-            {invoiceData.items.map(item => (
-              <InvoiceItemRow key={item.id} name={item.name} qty={item.qty} price={item.price} />
-            ))}
+          <ul
+
+            className="flex flex-col gap-6 md:gap-8">
+            {
+              invoiceData.items.map(item => (
+                <InvoiceItemRow key={item.id} name={item.name} qty={item.qty} price={item.price} />
+              ))
+            }
           </ul>
         </section>
 

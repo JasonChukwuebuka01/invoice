@@ -60,9 +60,11 @@ export const InvoiceProvider = ({ children }) => {
 
 
 
+
     const deleteInvoice = (id) => {
         setInvoices((prev) => prev.filter(inv => inv.id !== id));
     };
+
 
 
 
@@ -79,8 +81,18 @@ export const InvoiceProvider = ({ children }) => {
 
 
 
+    const updateInvoice = (id, updatedInvoice) => {
+        setInvoices((prev) =>
+            prev.map((inv) => (inv.id === id ? { ...updatedInvoice, id } : inv))
+        );
+    };
+
+
+
+
+
     return (
-        <InvoiceContext.Provider value={{ invoices, addInvoice, deleteInvoice, markAsPaid }}>
+        <InvoiceContext.Provider value={{ invoices, addInvoice, deleteInvoice, markAsPaid, updateInvoice}}>
             {children}
         </InvoiceContext.Provider>
     );

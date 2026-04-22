@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FormInput } from '../../helper/FormInput';
+import { useInvoices } from '../../../context/InvoiceContext';
 
-export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
+export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItemAdded }) {
+    const { updateInvoice } = useInvoices();
     const [formData, setFormData] = useState(initialData);
     const [number, setNumber] = useState(0);
     const [errors, setErrors] = useState({});
 
-    const sidePanelRef = useRef(null); // Ref for the scrollable container
+    const sidePanelRef = useRef(null);
 
 
 
-    
+
     // Reset form data when initialData changes
     useEffect(() => {
         if (initialData) setFormData(initialData);
-    }, [initialData]);
-
+    }, [initialData, isOpen]); // Added isOpen to ensure fresh data on every open
 
 
 
@@ -29,8 +30,9 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
 
 
 
-    //  Only scroll to bottom when 'number' changes (manually adding items)
-    // We check if number > 0 so it doesn't trigger on the very first load
+
+
+    // Smooth scroll to bottom when adding items
     useEffect(() => {
         if (number > 0 && sidePanelRef.current) {
             sidePanelRef.current.scrollTo({
@@ -39,6 +41,10 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
             });
         }
     }, [number]);
+
+
+
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,6 +58,10 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
             });
         }
     };
+
+
+
+
 
     const handleItemChange = (id, e) => {
         const { name, value } = e.target;
@@ -67,8 +77,12 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
         }
     };
 
+
+
+
+
     const addNewItem = () => {
-        setNumber(prev => prev + 1); // This triggers the scroll useEffect
+        setNumber(prev => prev + 1);
         const newItem = {
             id: Math.random(),
             name: '',
@@ -79,7 +93,18 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
             ...prev,
             items: [...prev.items, newItem]
         }));
+
+
+        // Notify parent to trigger scroll
+        if (onItemAdded) {
+            onItemAdded();
+        }
     };
+
+
+
+
+
 
     const deleteItem = (id) => {
         setFormData(prev => ({
@@ -87,6 +112,10 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
             items: prev.items.filter(item => item.id !== id)
         }));
     };
+
+
+
+
 
     const validateForm = () => {
         let tempErrors = {};
@@ -126,13 +155,40 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
         return Object.keys(tempErrors).length === 0;
     };
 
+
+
+
+
+
+
+
     const handleSaveChanges = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log("Form is valid. Saving data:", formData);
+            // 3. Calculate new total before saving
+            const newTotal = formData.items.reduce((acc, item) => {
+                return acc + (item.qty * item.price);
+            }, 0);
+
+            const finalData = {
+                ...formData,
+                total: newTotal
+            };
+
+
+            updateInvoice(formData.id, finalData);
             setIsOpen(false);
+            numberOfTimesUserClickAddNewButton(prev => prev + 1);
         }
     };
+
+
+
+
+
+
+
+
 
     return (
         <>
@@ -149,42 +205,42 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
             >
                 <div className="p-8 md:p-14 pb-32">
                     <h2 className="text-2xl font-bold text-[#0C0E17] dark:text-white mb-12 uppercase">
-                        Edit <span className="text-[#888EB0]">#</span>{formData.id}
+                        Edit <span className="text-[#888EB0]">#</span>{formData?.id}
                     </h2>
 
                     <form className="flex flex-col gap-12" noValidate onSubmit={handleSaveChanges}>
                         {/* Bill From */}
                         <fieldset className="flex flex-col gap-6 border-none p-0">
                             <legend className="text-purple-main font-bold text-[13px] mb-6 uppercase tracking-wider">Bill From</legend>
-                            <FormInput label="Street Address" name="senderStreet" value={formData.senderStreet} onChange={handleChange} error={errors.senderStreet} />
+                            <FormInput label="Street Address" name="senderStreet" value={formData?.senderStreet} onChange={handleChange} error={errors.senderStreet} />
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                <FormInput label="City" name="senderCity" value={formData.senderCity} onChange={handleChange} error={errors.senderCity} />
-                                <FormInput label="Post Code" name="senderPostCode" value={formData.senderPostCode} onChange={handleChange} error={errors.senderPostCode} />
-                                <FormInput label="Country" name="senderCountry" value={formData.senderCountry} onChange={handleChange} error={errors.senderCountry} gridClass="col-span-2 md:col-span-1" />
+                                <FormInput label="City" name="senderCity" value={formData?.senderCity} onChange={handleChange} error={errors.senderCity} />
+                                <FormInput label="Post Code" name="senderPostCode" value={formData?.senderPostCode} onChange={handleChange} error={errors.senderPostCode} />
+                                <FormInput label="Country" name="senderCountry" value={formData?.senderCountry} onChange={handleChange} error={errors.senderCountry} gridClass="col-span-2 md:col-span-1" />
                             </div>
                         </fieldset>
 
                         {/* Bill To */}
                         <fieldset className="flex flex-col gap-6 border-none p-0">
                             <legend className="text-purple-main font-bold text-[13px] mb-6 uppercase tracking-wider">Bill To</legend>
-                            <FormInput label="Client's Name" name="clientName" value={formData.clientName} onChange={handleChange} error={errors.clientName} />
-                            <FormInput label="Client's Email" name="clientEmail" value={formData.clientEmail} onChange={handleChange} error={errors.clientEmail} type="email" />
-                            <FormInput label="Street Address" name="clientStreet" value={formData.clientStreet} onChange={handleChange} error={errors.clientStreet} />
+                            <FormInput label="Client's Name" name="clientName" value={formData?.clientName} onChange={handleChange} error={errors.clientName} />
+                            <FormInput label="Client's Email" name="clientEmail" value={formData?.clientEmail} onChange={handleChange} error={errors.clientEmail} type="email" />
+                            <FormInput label="Street Address" name="clientStreet" value={formData?.clientStreet} onChange={handleChange} error={errors.clientStreet} />
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                <FormInput label="City" name="clientCity" value={formData.clientCity} onChange={handleChange} error={errors.clientCity} />
-                                <FormInput label="Post Code" name="clientPostCode" value={formData.clientPostCode} onChange={handleChange} error={errors.clientPostCode} />
-                                <FormInput label="Country" name="clientCountry" value={formData.clientCountry} onChange={handleChange} error={errors.clientCountry} gridClass="col-span-2 md:col-span-1" />
+                                <FormInput label="City" name="clientCity" value={formData?.clientCity} onChange={handleChange} error={errors.clientCity} />
+                                <FormInput label="Post Code" name="clientPostCode" value={formData?.clientPostCode} onChange={handleChange} error={errors.clientPostCode} />
+                                <FormInput label="Country" name="clientCountry" value={formData?.clientCountry} onChange={handleChange} error={errors.clientCountry} gridClass="col-span-2 md:col-span-1" />
                             </div>
                         </fieldset>
 
                         {/* Dates and Description */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <FormInput label="Invoice Date" name="invoiceDate" type="date" value={formData.invoiceDate} onChange={handleChange} />
+                            <FormInput label="Invoice Date" name="invoiceDate" type="date" value={formData?.invoiceDate} onChange={handleChange} />
                             <div className="flex flex-col gap-2">
                                 <label className="text-[13px] font-medium text-[#7E88C3] dark:text-[#DFE3FA]">Payment Terms</label>
                                 <select
                                     name="paymentTerms"
-                                    value={formData.paymentTerms}
+                                    value={formData?.paymentTerms}
                                     onChange={handleChange}
                                     className="w-full p-4 rounded-md border border-[#DFE3FA] dark:border-[#252945] bg-transparent dark:text-white font-bold text-[13px] outline-none focus:border-purple-main cursor-pointer"
                                 >
@@ -194,15 +250,15 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData }) {
                                     <option value="30">Net 30 Days</option>
                                 </select>
                             </div>
-                            <FormInput label="Project Description" name="projectDescription" value={formData.projectDescription} onChange={handleChange} error={errors.projectDescription} gridClass="md:col-span-2" />
+                            <FormInput label="Project Description" name="projectDescription" value={formData?.projectDescription} onChange={handleChange} error={errors.projectDescription} gridClass="md:col-span-2" />
                         </div>
 
                         {/* Item List Section */}
                         <div className="flex flex-col gap-4">
                             <h3 className="text-[#777f98] font-bold text-lg tracking-tighter">Item List</h3>
                             <div className="flex flex-col gap-12 md:gap-4">
-                                {formData.items.map((item, index) => (
-                                    <div key={item.id} className="grid grid-cols-2 md:grid-cols-[3fr_1fr_2fr_1fr_auto] gap-4 items-end">
+                                {formData?.items?.map((item, index) => (
+                                    <div key={item.id} className="grid grid-cols-2 md:grid-cols-[3fr_1fr_2fr_1fr_auto] gap-4 items-end animate-fadeIn">
                                         <div className="col-span-2 md:col-span-1">
                                             <FormInput
                                                 label="Item Name"
