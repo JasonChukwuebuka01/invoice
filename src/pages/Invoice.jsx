@@ -19,7 +19,7 @@ export default function Invoice() {
     ]);
 
     return (
-        <div className="w-full max-w-[730px] mx-auto transition-all duration-500 pb-4 ">
+        <div className="w-full max-w-[730px] mx-auto transition-all duration-500 pb-4 pt-[20%] lg:pt-[4%]">
             <InvoiceHeader count={invoices.length} />
 
 

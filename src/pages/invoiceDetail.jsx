@@ -34,9 +34,12 @@ export default function InvoiceDetails() {
   if (!invoiceData) return <div className="p-10 text-white text-center">Loading...</div>;
 
   return (
-    <main className="min-h-screen bg-[#f8f8fb] dark:bg-[#141625] pt-8 pb-14 px-6 md:pt-12 md:px-12 lg:px-[20%] transition-colors duration-300 relative">
-      
-      <DeleteModal 
+    /* FIX 1: Reduced px-4 to px-2 on mobile. 
+       This allows the invoice to spread across the screen like in your Figma screenshot.
+    */
+    <main className="min-h-screen bg-[#f8f8fb] dark:bg-[#141625] pt-[25%]  sm:pt-[12%] lg:pt-[4%] pb-32 px-2  lg:px-[20%] transition-colors duration-300 relative">
+
+      <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={handleDelete}
@@ -45,7 +48,8 @@ export default function InvoiceDetails() {
 
       <EditInvoiceForm isOpen={isEditOpen} setIsOpen={setIsEditOpen} initialData={invoiceData} />
 
-      <Link to="/" className="flex items-center gap-6 mb-8 group w-fit">
+      {/* Margins adjusted to align with the new tighter padding */}
+      <Link to="/" className="flex items-center gap-6 mb-8 ml-2 group w-fit">
         <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg">
           <path d="M6.342.886L2.114 5.114l4.228 4.228" stroke="#9277FF" strokeWidth="2" fill="none" />
         </svg>
@@ -54,8 +58,8 @@ export default function InvoiceDetails() {
         </span>
       </Link>
 
-      {/* Header Action Bar - Specific Tablet/Desktop Layout */}
-      <header className="bg-white dark:bg-[#1E2139] p-6 md:px-8 rounded-lg flex items-center justify-between shadow-sm mb-6">
+      {/* Header Action Bar - Tightened p-4 on mobile */}
+      <header className="bg-white dark:bg-[#1E2139] p-4 md:px-8 md:py-6 rounded-lg flex items-center justify-between shadow-sm mb-4 md:mb-6">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-5">
           <span className="text-[#858BB2] dark:text-[#DFE3FA] text-[13px]">Status</span>
           <div className="status-pill flex items-center justify-center gap-2 w-[104px] h-10 rounded-md bg-[rgba(255,143,0,0.06)] text-[#FF8F00] font-bold text-[15px]">
@@ -77,9 +81,11 @@ export default function InvoiceDetails() {
         </div>
       </header>
 
-      {/* Main Invoice Body */}
-      <article className="bg-white dark:bg-[#1E2139] p-6 md:p-12 rounded-lg shadow-sm">
-        <section className="flex flex-col md:flex-row justify-between gap-8 mb-12">
+      {/* FIX 2: Main Invoice Body - Changed p-6 to p-4 on mobile.
+          This stops the "shrunk" look by giving the actual content 33% more horizontal room.
+      */}
+      <article className="bg-white dark:bg-[#1E2139] p-4 md:p-12 rounded-lg shadow-sm">
+        <section className="flex flex-col md:flex-row justify-between gap-8 mb-10 md:mb-12">
           <div>
             <h1 className="text-[#0C0E17] dark:text-white font-bold text-base md:text-[20px] mb-1 uppercase tracking-tight">
               <span className="text-[#888EB0]">#</span>{invoiceData.id}
@@ -94,8 +100,8 @@ export default function InvoiceDetails() {
           </address>
         </section>
 
-        {/* 3-Column Info Grid for Tablet */}
-        <section className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12">
+        {/* 3-Column Info Grid */}
+        <section className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-10 md:mb-12">
           <div className="flex flex-col gap-8">
             <div>
               <h3 className="text-[#7E88C3] dark:text-[#DFE3FA] text-[13px] mb-3">Invoice Date</h3>
@@ -124,8 +130,10 @@ export default function InvoiceDetails() {
           </div>
         </section>
 
-        {/* Table Section */}
-        <section className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-6 md:p-8">
+        {/* FIX 3: Table Section - Reduced mobile padding to p-4.
+            The items will now span wider, matching the Figma header/footer alignment.
+        */}
+        <section className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-4 md:p-8">
           <div className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr] mb-8 text-[#7E88C3] dark:text-[#DFE3FA] text-[13px]">
             <span>Item Name</span>
             <span className="text-center">QTY.</span>
@@ -146,15 +154,15 @@ export default function InvoiceDetails() {
         </footer>
       </article>
 
-      {/* Mobile-Only Action Footer (Hidden on Tablet) */}
-      <footer className="md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-[#1E2139] p-6 flex justify-center gap-2 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-30">
-        <button onClick={() => setIsEditOpen(true)} className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-6 py-4 rounded-full font-bold text-[13px]">
+      {/* Mobile Footer Buttons */}
+      <footer className="md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-[#1E2139] p-4 flex justify-center items-center gap-2 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-30">
+        <button onClick={() => setIsEditOpen(true)} className="flex-1 bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] py-4 rounded-full font-bold text-[13px]">
           Edit
         </button>
-        <button onClick={() => setIsDeleteModalOpen(true)} className="bg-[#EC5757] text-white px-6 py-4 rounded-full font-bold text-[13px]">
+        <button onClick={() => setIsDeleteModalOpen(true)} className="flex-1 bg-[#EC5757] text-white py-4 rounded-full font-bold text-[13px]">
           Delete
         </button>
-        <button className="bg-[#7C5DFA] text-white px-6 py-4 rounded-full font-bold text-[13px]">
+        <button className="flex-1 bg-[#7C5DFA] text-white py-4 rounded-full font-bold text-[13px]">
           Paid
         </button>
       </footer>
