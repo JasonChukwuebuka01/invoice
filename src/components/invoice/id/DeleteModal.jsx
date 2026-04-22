@@ -1,19 +1,24 @@
-// components/invoice/id/DeleteModal.jsx
 import React from 'react';
 
 export default function DeleteModal({ isOpen, onClose, onDelete, invoiceId }) {
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-            <div className="absolute inset-0 bg-black/50 transition-opacity" onClick={onClose} />
+        
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}>
+            {/* Dark Overlay with smooth fade */}
+            <div
+                className="absolute inset-0 bg-black/50"
+                onClick={onClose}
+            />
 
-            <div className="relative bg-white dark:bg-[#1E2139] w-full max-w-[480px] p-8 md:p-12 rounded-lg shadow-2xl animate-in fade-in zoom-in duration-200">
+            {/* Modal Box with Zoom and Fade */}
+            <div className={`relative bg-white dark:bg-[#1E2139] w-full max-w-[480px] p-8 md:p-12 rounded-lg shadow-2xl transition-all duration-300 transform ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'
+                }`}>
                 <h2 className="text-[#0C0E17] dark:text-white text-[24px] font-bold mb-3 tracking-tight">
                     Confirm Deletion
                 </h2>
                 <p className="text-[#7E88C3] dark:text-[#DFE3FA] text-[13px] leading-[22px] mb-4">
-                    Are you sure you want to delete invoice #{invoiceId}? This action cannot be undone.
+                    Are you sure you want to delete invoice <span className="font-bold">#{invoiceId}</span>? This action cannot be undone.
                 </p>
 
                 <div className="flex justify-end gap-2 mt-4">
