@@ -207,7 +207,7 @@ const FormComponent = ({ setIsFormOpen }) => {
             </div>
 
             {/* Footer Buttons */}
-            <div className="absolute lg:fixed bottom-0 left-0 w-full p-4 md:p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] transition-colors duration-300">
+            <div className="absolute lg:fixed bottom-0 left-0 w-full p-4 pb-7 lg:pb-4 md:p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] transition-colors duration-300">
 
                 {/* Discard Button */}
                 <button
