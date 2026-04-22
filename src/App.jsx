@@ -9,6 +9,8 @@ function App() {
            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
 
+
+
   // Effect to sync the 'dark' class with the state
   useEffect(() => {
     const root = window.document.documentElement;
@@ -23,6 +25,9 @@ function App() {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
+
+
+  
   return (
     // We apply the theme background to the very top container
     <div className="flex h-screen w-screen bg-light-bg dark:bg-dark-bg transition-colors duration-300 font-spartan">

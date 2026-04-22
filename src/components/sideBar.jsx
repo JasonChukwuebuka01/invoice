@@ -29,16 +29,16 @@ export default function Sidebar() {
                 <button
                     onClick={toggleTheme}
                     className="flex items-center justify-center px-6 md:px-7 lg:px-0 lg:py-8 cursor-pointer transition-colors outline-none group"
-                    // UX: Aria-label tells screen readers what the *next* action is.
                     aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
                 >
-                    {theme === 'light' ? (
-                        /* Moon Icon - Visible when app is in LIGHT mode */
-                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="fill-[#7E88C3] hover:fill-[#DFE3FA] transition-colors"><path d="M6.224 4.903A8.103 8.103 0 0115.097 13.78a8.103 8.103 0 10-8.873-8.877z" fillRule="nonzero" /></svg>
-                    ) : (
-                        /* Sun Icon - Visible when app is in DARK mode */
-                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" className="fill-[#858BB2] hover:fill-[#DFE3FA] transition-colors"><path d="M10 15a5 5 0 100-10 5 5 0 000 10zM10 0V2.5M10 17.5V20M3 3l1.768 1.768M15.232 15.232L17 17M0 10h2.5M17.5 10H20M3 17l1.768-1.768M15.232 4.768L17 3" stroke="#858BB2" strokeWidth="2" fill="none" fillRule="evenodd" /></svg>
-                    )}
+                    {/* The Circle Indicator */}
+                    <div
+                        className={`w-3 h-3 rounded-full transition-all duration-300 transform group-hover:scale-125
+        ${theme === 'light'
+                                ? 'bg-[#7E88C3] shadow-[0_0_8px_rgba(126,136,195,0.4)]' // Soft blue-gray for light mode
+                                : 'bg-[#7C5DFA] shadow-[0_0_12px_rgba(124,93,250,0.6)]'  // Glowing brand purple for dark mode
+                            }`}
+                    />
                 </button>
 
                 {/* Divider Line */}
