@@ -61,7 +61,7 @@ const InvoiceItemInput = forwardRef(({ item, index, handleItemChange, removeItem
                     type="number"
                     name="price"
                     min="0"
-                    step="0.01"
+                    step="100"
                     value={item.price}
                     onChange={(e) => handleItemChange(index, e)}
                     className={`w-full p-4 rounded-md border font-bold text-base sm:text-[13px] outline-none transition-all

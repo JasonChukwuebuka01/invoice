@@ -28,3 +28,11 @@
     @apply font-spartan transition-colors duration-300 bg-light-bg text-light-text dark:bg-dark-bg dark:text-white;
   }
 }
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
