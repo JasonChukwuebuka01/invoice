@@ -2,6 +2,7 @@ import { useState } from 'react';
 import InvoiceHeader from '../components/invoice-page/InvoiceHeader';
 import EmptyState from '../components/invoice-page/EmptyState';
 import InvoiceCard from '../components/invoice-page/InvoiceCard';
+import { Link } from 'react-router-dom';
 
 
 
@@ -18,7 +19,7 @@ export default function Invoice() {
     ]);
 
     return (
-        <div className="w-full max-w-[730px] mx-auto transition-all duration-500">
+        <div className="w-full max-w-[730px] mx-auto transition-all duration-500 pb-4 ">
             <InvoiceHeader count={invoices.length} />
 
 
@@ -30,7 +31,11 @@ export default function Invoice() {
                         <section aria-label="Invoice list">
                             {
                                 invoices.map(invoice => (
-                                    <InvoiceCard key={invoice.id} invoice={invoice} />
+
+                                    <Link to={`/invoice/${invoice.id}`} key={invoice.id} className="block">
+                                        <InvoiceCard key={invoice.id} invoice={invoice} />
+                                    </Link>
+
                                 ))
                             }
                         </section>

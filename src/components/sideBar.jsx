@@ -7,7 +7,7 @@ export default function Sidebar() {
 
     return (
         <aside
-            className="fixed top-0 left-0 z-50 flex flex-row lg:flex-col bg-[#1E2139] dark:bg-[#1E2139] w-full h-[72px] md:h-[80px] lg:h-screen lg:w-[103px] lg:rounded-r-[20px] transition-all duration-300 items-center justify-between overflow-hidden"
+            className="fixed top-0 left-0 z-500 flex flex-row lg:flex-col bg-[#1E2139] dark:bg-[#1E2139] w-full h-[72px] md:h-[80px] lg:h-screen lg:w-[103px]  transition-all duration-300 items-center justify-between overflow-hidden"
             role="complementary"
         >
             {/* Logo Section */}
@@ -18,7 +18,7 @@ export default function Sidebar() {
                 <img
                     src={invoiceLogo}
                     alt="Logo"
-                    className="relative z-10 h-[26px] w-[28px] lg:h-[38px] lg:w-[40px] object-contain"
+                    className="relative z-10 h-[50px] w-[50px] lg:h-[60px] lg:w-[60px] object-contain"
                 />
             </div>
 

@@ -1,65 +1,61 @@
+import React from 'react';
 import arrowRight from '../../assets/arrow-copy.png';
 
 export default function InvoiceCard({ invoice }) {
     const statusStyles = {
-        paid: "bg-[#33d69f0f] text-status-paid",
-        pending: "bg-[#ff8f000f] text-status-pending",
-        draft: "bg-[#373b530f] text-status-draft dark:text-[#DFE3FA]",
+        paid: "bg-[#33d69f0f] text-[#33D69F]",
+        pending: "bg-[#ff8f000f] text-[#FF8F00]",
+        draft: "bg-[#dfe3fa0f] text-[#373B53] dark:text-[#DFE3FA]",
     };
 
     const dotStyles = {
-        paid: "bg-status-paid",
-        pending: "bg-status-pending",
-        draft: "bg-[#373b53] dark:bg-[#DFE3FA]",
+        paid: "bg-[#33D69F]",
+        pending: "bg-[#FF8F00]",
+        draft: "bg-[#373B53] dark:bg-[#DFE3FA]",
     };
 
     return (
         <article
-            className="group grid grid-cols-2 sm:flex sm:items-center sm:justify-between bg-white dark:bg-dark-card p-6 rounded-lg shadow-sm mb-4 border border-transparent hover:border-purple-main transition-all cursor-pointer focus-within:ring-2 focus-within:ring-purple-main outline-none"
+            className="group grid grid-cols-2 sm:grid-cols-[auto_1fr_1fr_1fr_auto] sm:items-center bg-white dark:bg-[#1E2139] p-6 sm:py-4 sm:px-8 rounded-lg shadow-sm mb-4 border border-transparent hover:border-[#7C5DFA] transition-all cursor-pointer outline-none"
             tabIndex="0"
         >
-            {/* Top Left: ID & Bottom Left: Date (Mobile) / Sequential (Desktop) */}
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-6 lg:gap-12">
-                <span className="font-bold text-[13px] dark:text-white uppercase order-1">
-                    <span className="text-[#7E88C3]">#</span>{invoice.id}
-                </span>
-                
-                <span className="text-[13px] text-[#7E88C3] dark:text-[#DFE3FA] order-3 sm:order-2">
-                    <span className="sm:hidden">Due </span>{invoice.paymentDue}
+            {/* --- ID Section --- */}
+            <span className="font-bold text-[12px] md:text-[15px] dark:text-white uppercase mb-6 sm:mb-0">
+                <span className="text-[#7E88C3]">#</span>{invoice.id}
+            </span>
+
+            {/* --- Client Name (Top Right on Mobile / Center on Desktop) --- */}
+            <span className="text-[13px] text-[#858BB2] dark:text-white text-right sm:text-left mb-6 sm:mb-0 sm:pl-4">
+                {invoice.clientName}
+            </span>
+
+            {/* --- Date Section (Bottom Left on Mobile) --- */}
+            <div className="flex flex-col sm:flex-row sm:items-center">
+                <span className="text-[13px] text-[#7E88C3] dark:text-[#DFE3FA]">
+                    <span className="sm:hidden text-[#888EB0]">Due </span>{invoice.paymentDue}
                 </span>
             </div>
 
-            {/* Top Right: Client Name (Mobile) / Sequential (Desktop) */}
-            <div className="text-right sm:text-left order-2 sm:order-3">
-                <span className="text-[13px] text-[#858BB2] dark:text-white">
-                    {invoice.clientName}
-                </span>
-            </div>
+            {/* --- Amount (Below Date on Mobile / Right on Desktop) --- */}
+            <span className="text-base md:text-[20px] font-bold dark:text-white mt-2 sm:mt-0 sm:text-right sm:pr-10">
+                £ {invoice.total}
+            </span>
 
-            {/* Bottom Section (Mobile) / Right Section (Desktop) */}
-            <div className="flex items-center justify-between col-span-2 mt-2 sm:mt-0 sm:col-span-1 sm:order-4 sm:gap-8 lg:gap-10">
-                <span className="text-base font-bold dark:text-white lg:text-lg">
-                    £{invoice.total}
-                </span>
-
-                <div className="flex items-center gap-4">
-                    {/* Status Pill */}
-                    <div className={`w-[104px] h-[40px] rounded-md flex items-center justify-center gap-2 font-bold capitalize text-[13px] ${statusStyles[invoice.status]}`}>
-                        <div 
-                            className={`w-2 h-2 rounded-full ${dotStyles[invoice.status]}`} 
-                            aria-hidden="true" 
-                        />
-                        <p aria-label='invoice-status'>{invoice.status}</p>
-                    </div>
-
-                    {/* Arrow - Hidden on mobile, visible on desktop */}
-                    <img
-                        src={arrowRight}
-                        alt=""
+            {/* --- Status & Arrow --- */}
+            <div className="flex items-center justify-end col-start-2 row-start-2 sm:col-start-auto sm:row-start-auto">
+                <div className={`  w-[104px] h-[40px] rounded-md flex items-center justify-center gap-2 font-bold capitalize text-[15px] ${statusStyles[invoice.status]}`}>
+                    <div
+                        className={`w-2 h-2 rounded-full ${dotStyles[invoice.status]}`}
                         aria-hidden="true"
-                        className="hidden sm:block w-[4px] h-[8px] object-contain"
                     />
+                    {invoice.status}
                 </div>
+
+                <img
+                    src={arrowRight}
+                    alt=""
+                    className="hidden sm:block ml-5 w-[7px] h-[10px]"
+                />
             </div>
         </article>
     );
