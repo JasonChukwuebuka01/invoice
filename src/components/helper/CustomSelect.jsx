@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 
-export const CustomSelect = ({ label, value, onChange, options }) => {
+export const CustomSelect = ({ value, onChange, options }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-
-
-
-
     const selectedOption = options.find(opt => opt.value === value);
-
-
 
     const handleSelect = (optionValue) => {
         onChange({ target: { name: 'paymentTerms', value: optionValue } });
@@ -18,12 +12,11 @@ export const CustomSelect = ({ label, value, onChange, options }) => {
 
     return (
         <div className="flex flex-col gap-2 relative">
-
             {/* Trigger Button */}
             <button
                 type='button'
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full p-4 rounded-md border bg-transparent dark:text-white font-bold text-[13px] cursor-pointer flex justify-between items-center transition-all outline-none 
+                className={`w-full p-4 rounded-md border bg-white dark:bg-[#1E2139] text-[#0C0E17] dark:text-white font-bold text-[13px] cursor-pointer flex justify-between items-center transition-all outline-none 
                 ${isOpen ? 'border-purple-main' : 'border-[#DFE3FA] dark:border-[#252945] hover:border-purple-main'}`}
             >
                 {selectedOption ? selectedOption.label : 'Select Terms'}
@@ -38,14 +31,16 @@ export const CustomSelect = ({ label, value, onChange, options }) => {
 
             {/* Dropdown Options */}
             {isOpen && (
-                <div className="absolute top-[100%] left-0 w-full mt-2 bg-white dark:bg-[#252945] shadow-2xl rounded-lg z-50 overflow-hidden border border-transparent">
+                <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white dark:bg-[#252945] shadow-[0_10px_20px_rgba(72,84,159,0.25)] dark:shadow-[0_10px_20px_rgba(0,0,0,0.25)] rounded-lg z-50 overflow-hidden transition-all duration-300">
                     {options.map((option) => (
                         <div
                             key={option.value}
                             onClick={() => handleSelect(option.value)}
-                            className="p-4 text-[13px] font-bold text-[#1E2139] dark:text-[#DFE3FA] cursor-pointer border-b border-[#DFE3FA] dark:border-[#1E2139] last:border-0 hover:text-purple-main hover:bg-purple-main  hover:text-white transition-colors bg-white dark:bg-[#1E2139]"
+                            className="p-4 text-[13px] font-bold text-[#1E2139] dark:text-[#DFE3FA] cursor-pointer border-b border-[#DFE3FA] dark:border-[#1E2139] last:border-0 hover:text-purple-main transition-colors bg-white dark:bg-[#252945]"
                         >
-                            {option.label}
+                            <span className={option.value === value ? "text-purple-main" : ""}>
+                                {option.label}
+                            </span>
                         </div>
                     ))}
                 </div>
@@ -53,4 +48,3 @@ export const CustomSelect = ({ label, value, onChange, options }) => {
         </div>
     );
 };
-

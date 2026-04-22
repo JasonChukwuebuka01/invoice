@@ -1,10 +1,12 @@
 @import "tailwindcss";
 
-/* If you have the font import, keep it at the top */
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@500;700&display=swap');
 
+/*  Define the Dark Mode strategy (Outside @theme) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  /* This is the new way to add Figma colors in v4! */
+  /* Your custom variables stay here */
   --color-purple-main: #7C5DFA;
   --color-purple-hover: #9277FF;
   --color-dark-bg: #0C0E16;
@@ -15,10 +17,14 @@
   --color-status-paid: #33D69F;
   --color-status-pending: #FF8F00;
   --color-status-draft: #373B53;
+  --color-pages-color: #141625;
+
   --font-spartan: "League Spartan", sans-serif;
 }
 
-body {
-  @apply font-spartan transition-colors duration-300;
+/*  Global Base Styles */
+@layer base {
+  body {
+    @apply font-spartan transition-colors duration-300 bg-light-bg text-light-text dark:bg-dark-bg dark:text-white;
+  }
 }
-

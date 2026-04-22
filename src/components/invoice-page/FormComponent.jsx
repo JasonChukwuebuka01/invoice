@@ -207,7 +207,7 @@ const FormComponent = ({ setIsFormOpen }) => {
             </div>
 
             {/* Footer Buttons */}
-            <div className="fixed bottom-0 w-full p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]">
+            <div className="fixed bottom-0 w-full p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] border-0  outline-0">
                 <button type="button" onClick={() => setIsFormOpen(false)} className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#DFE3FA] transition-all">Discard</button>
                 <div className="flex gap-2">
                     <button type="button" onClick={handleSaveDraft} className="bg-[#373B53] text-[#888EB0] dark:text-[#DFE3FA] px-6 md:px-8 py-4 rounded-full font-bold text-[13px] hover:bg-[#0C0E17] transition-all">Save as Draft</button>
