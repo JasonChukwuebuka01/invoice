@@ -43,7 +43,6 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
 
         if (isOpen) {
             window.addEventListener('keydown', handleKeyDown);
-            // Prevent background scrolling
             document.body.style.overflow = 'hidden';
             if (firstInputRef.current) {
                 firstInputRef.current.focus();
@@ -144,7 +143,7 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
         const requiredFields = [
             'senderStreet', 'senderCity', 'senderPostCode', 'senderCountry',
             'clientName', 'clientEmail', 'clientStreet', 'clientCity',
-            'clientPostCode', 'clientCountry', 'projectDescription'
+            'clientPostCode', 'clientCountry', 'projectDescription', 'createdAt'
         ];
 
         requiredFields.forEach(field => {
@@ -171,16 +170,25 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
         return Object.keys(tempErrors).length === 0;
     };
 
+    // FIX: Updated to recalculate paymentDue
     const handleSaveChanges = (e) => {
         e.preventDefault();
         if (validateForm()) {
             const newTotal = formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
             const updatedStatus = formData.status === 'draft' ? 'pending' : formData.status;
 
+            // Recalculate paymentDue based on Invoice Date (createdAt) and Terms
+            const baseDate = new Date(formData.createdAt);
+            const daysToAdd = Number(formData.paymentTerms);
+            
+            baseDate.setDate(baseDate.getDate() + daysToAdd);
+            const newPaymentDue = baseDate.toISOString().split('T')[0];
+
             const finalData = {
                 ...formData,
                 total: newTotal,
-                status: updatedStatus
+                status: updatedStatus,
+                invoiceDate: newPaymentDue 
             };
 
             updateInvoice(formData.id, finalData);
