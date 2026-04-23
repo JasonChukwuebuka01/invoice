@@ -8,20 +8,21 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
     const [scrollTrigger, setScrollTrigger] = useState(0);
     const [errors, setErrors] = useState({});
 
-    // NEW: Track the ID of the most recently added item to focus it
     const [lastAddedItemId, setLastAddedItemId] = useState(null);
     const newItemRef = useRef(null);
     const sidePanelRef = useRef(null);
+    const firstInputRef = useRef(null);
 
 
-
+    useEffect(() => {
+        if (isOpen && firstInputRef.current) {
+            firstInputRef.current.focus();
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         if (initialData) setFormData(initialData);
     }, [initialData, isOpen]);
-
-
-
 
     useEffect(() => {
         if (isOpen && sidePanelRef.current) {
@@ -29,20 +30,13 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
         }
     }, [isOpen]);
 
-
-
-
-    // Combined Scroll and Auto-Focus Logic
     useEffect(() => {
         if (scrollTrigger > 0 && sidePanelRef.current) {
-            // 1. Scroll to bottom
             sidePanelRef.current.scrollTo({
                 top: sidePanelRef.current.scrollHeight,
                 behavior: 'smooth'
             });
 
-            // 2. Focus the new input
-            // We use a tiny timeout to wait for the smooth scroll to finish/DOM to settle
             const focusTimeout = setTimeout(() => {
                 if (newItemRef.current) {
                     newItemRef.current.focus();
@@ -51,9 +45,7 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
 
             return () => clearTimeout(focusTimeout);
         }
-    }, [scrollTrigger, lastAddedItemId]); // Trigger when count or ID changes
-
-
+    }, [scrollTrigger, lastAddedItemId]);
 
 
     const handleChange = (e) => {
@@ -82,9 +74,9 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
     };
 
     const addNewItem = () => {
-        const newId = Math.random(); // Generate ID first
+        const newId = Math.random();
         setScrollTrigger(prev => prev + 1);
-        setLastAddedItemId(newId); // Save ID for the Ref logic
+        setLastAddedItemId(newId);
 
         const newItem = {
             id: newId,
@@ -144,12 +136,21 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
         e.preventDefault();
         if (validateForm()) {
             const newTotal = formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
-            const finalData = { ...formData, total: newTotal };
+
+            // 1. Check if the status is currently 'draft'
+            // 2. If so, update it to 'pending'
+            const updatedStatus = formData.status === 'draft' ? 'pending' : formData.status;
+
+            const finalData = {
+                ...formData,
+                total: newTotal,
+                status: updatedStatus // Apply the status change here
+            };
+
             updateInvoice(formData.id, finalData);
             setIsOpen(false);
         }
     };
-
     return (
         <>
             <div
@@ -167,16 +168,50 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
                     </h2>
 
                     <form className="flex flex-col gap-12" noValidate onSubmit={handleSaveChanges}>
-                        {/* Bill From & To Sections (Condensed for brevity, same as yours) */}
+                        {/* Bill From */}
                         <fieldset className="flex flex-col gap-6 border-none p-0">
                             <legend className="text-purple-main font-bold text-[13px] mb-6 uppercase tracking-wider">Bill From</legend>
-                            <FormInput label="Street Address" name="senderStreet" value={formData?.senderStreet} onChange={handleChange} error={errors.senderStreet} />
+                            <FormInput label="Street Address" name="senderStreet" value={formData?.senderStreet} onChange={handleChange} error={errors.senderStreet} ref={firstInputRef} />
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                 <FormInput label="City" name="senderCity" value={formData?.senderCity} onChange={handleChange} error={errors.senderCity} />
                                 <FormInput label="Post Code" name="senderPostCode" value={formData?.senderPostCode} onChange={handleChange} error={errors.senderPostCode} />
                                 <FormInput label="Country" name="senderCountry" value={formData?.senderCountry} onChange={handleChange} error={errors.senderCountry} gridClass="col-span-2 md:col-span-1" />
                             </div>
                         </fieldset>
+
+                        {/* Bill To */}
+                        <fieldset className="flex flex-col gap-6 border-none p-0">
+                            <legend className="text-purple-main font-bold text-[13px] mb-6 uppercase tracking-wider">Bill To</legend>
+                            <FormInput label="Client's Name" name="clientName" value={formData?.clientName} onChange={handleChange} error={errors.clientName} />
+                            <FormInput label="Client's Email" name="clientEmail" placeholder="e.g. email@example.com" value={formData?.clientEmail} onChange={handleChange} error={errors.clientEmail} />
+                            <FormInput label="Street Address" name="clientStreet" value={formData?.clientStreet} onChange={handleChange} error={errors.clientStreet} />
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                                <FormInput label="City" name="clientCity" value={formData?.clientCity} onChange={handleChange} error={errors.clientCity} />
+                                <FormInput label="Post Code" name="clientPostCode" value={formData?.clientPostCode} onChange={handleChange} error={errors.clientPostCode} />
+                                <FormInput label="Country" name="clientCountry" value={formData?.clientCountry} onChange={handleChange} error={errors.clientCountry} gridClass="col-span-2 md:col-span-1" />
+                            </div>
+                        </fieldset>
+
+                        {/* Date & Terms */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormInput label="Invoice Date" name="createdAt" type="date" value={formData?.createdAt} onChange={handleChange} error={errors.createdAt} />
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[13px] font-medium text-[#7E88C3] dark:text-[#DFE3FA]">Payment Terms</label>
+                                <select
+                                    name="paymentTerms"
+                                    value={formData?.paymentTerms}
+                                    onChange={handleChange}
+                                    className="w-full p-4 rounded-md border font-bold text-[13px] outline-none bg-white dark:bg-[#1E2139] dark:text-white border-[#DFE3FA] dark:border-[#252945] focus:border-[#7C5DFA] appearance-none cursor-pointer"
+                                >
+                                    <option value={1}>Net 1 Day</option>
+                                    <option value={7}>Net 7 Days</option>
+                                    <option value={14}>Net 14 Days</option>
+                                    <option value={30}>Net 30 Days</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <FormInput label="Project Description" name="projectDescription" placeholder="e.g. Graphic Design Service" value={formData?.projectDescription} onChange={handleChange} error={errors.projectDescription} />
 
                         {/* Item List Section */}
                         <div className="flex flex-col gap-4">
@@ -186,18 +221,16 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
                                     <div key={item.id} className="grid grid-cols-2 md:grid-cols-[3fr_1fr_2fr_1fr_auto] gap-4 items-end animate-fadeIn">
                                         <div className="col-span-2 md:col-span-1">
                                             <FormInput
-                                                // ATTACH REF HERE ONLY IF IT MATCHES LAST ADDED ID
                                                 ref={item.id === lastAddedItemId ? newItemRef : null}
                                                 label="Item Name"
-                                                hideLabelOnDesktop
                                                 value={item.name}
                                                 onChange={(e) => handleItemChange(item.id, e)}
                                                 name="name"
                                                 error={errors.itemErrors?.[index]?.name}
                                             />
                                         </div>
-                                        <FormInput label="Qty." hideLabelOnDesktop value={item.qty} onChange={(e) => handleItemChange(item.id, e)} name="qty" type="number" error={errors.itemErrors?.[index]?.qty} />
-                                        <FormInput label="Price" hideLabelOnDesktop value={item.price} onChange={(e) => handleItemChange(item.id, e)} name="price" type="number" error={errors.itemErrors?.[index]?.price} />
+                                        <FormInput label="Qty." value={item.qty} onChange={(e) => handleItemChange(item.id, e)} name="qty" type="number" error={errors.itemErrors?.[index]?.qty} />
+                                        <FormInput label="Price" value={item.price} onChange={(e) => handleItemChange(item.id, e)} name="price" type="number" error={errors.itemErrors?.[index]?.price} />
 
                                         <div className="flex flex-col gap-2">
                                             <label className="md:hidden text-[13px] font-medium text-[#7E88C3] dark:text-[#DFE3FA]">Total</label>
