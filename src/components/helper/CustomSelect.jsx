@@ -36,9 +36,14 @@ export const CustomSelect = ({ value, onChange, options }) => {
                         <div
                             key={option.value}
                             onClick={() => handleSelect(option.value)}
-                            className="p-4 text-[13px] font-bold text-[#1E2139] dark:text-[#DFE3FA] cursor-pointer border-b border-[#DFE3FA] dark:border-[#1E2139] last:border-0 hover:text-purple-main transition-colors bg-white dark:bg-[#252945]"
+                            className="group p-4 text-[13px] font-bold cursor-pointer border-b border-[#DFE3FA] dark:border-[#1E2139] last:border-0 bg-white dark:bg-[#252945] transition-colors hover:bg-purple-main"
                         >
-                            <span className={option.value === value ? "text-purple-main" : ""}>
+                            <span className={`transition-colors duration-200 
+        ${option.value === value
+                                    ? "text-purple-main group-hover:text-white"
+                                    : "text-[#1E2139] dark:text-[#DFE3FA] group-hover:text-white"
+                                }`}
+                            >
                                 {option.label}
                             </span>
                         </div>
