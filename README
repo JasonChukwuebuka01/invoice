@@ -1,0 +1,93 @@
+Invoice Builder
+
+Overview
+--------
+Invoice Builder is a lightweight single-page React application (Vite) for creating, editing, and managing invoices. It uses a component-driven structure with React Context for application state (invoices + theme). The UI is implemented with plain React components and Tailwind for styling.
+
+Setup
+-----
+Prerequisites
+- Node.js 16+ and npm (or yarn)
+
+Install
+1. Install dependencies:
+
+```bash
+npm install
+# or: yarn
+```
+
+2. Run the development server:
+
+```bash
+npm run dev
+# or: yarn dev
+```
+
+3. Build for production:
+
+```bash
+npm run build
+# Preview production build:
+npm run preview
+```
+
+Project architecture
+--------------------
+High-level structure (src/):
+
+- `src/main.jsx` — app entry (Vite + React).
+- `src/App.jsx` / `src/App.css` — top-level layout and global styles.
+- `src/context/` — React Context providers:
+  - `InvoiceContext.jsx` — manages invoices, CRUD operations, derived selectors.
+  - `themeContext.jsx` — theme (dark/light) state and persistence.
+- `src/components/` — reusable UI pieces and form controls.
+  - `helper/` — shared small components (`FormInput.jsx`, `CustomSelect.jsx`).
+  - `invoice/` — invoice-specific components and forms (`EditInvoiceForm.jsx`, `InvoiceItemRow.jsx`).
+  - `invoice-page/` — page-level components and views (list, empty state, card, header).
+- `src/pages/` — route-level pages (`Invoice.jsx`, `invoiceDetail.jsx`).
+- `src/assets/` — images and static assets.
+
+State & data flow
+- Local app state for invoices is held in `InvoiceContext` and provided to components via Context API. Components dispatch actions or call context helpers to mutate state. The approach keeps the UI simple and avoids prop-drilling.
+
+Why this structure
+- Simple, predictable, and easy to onboard new contributors.
+- Component folderization groups related UI logic next to usage (feature-first).
+
+Trade-offs
+-----------
+- Context API vs external state manager: Context is lightweight and sufficient for this size, but can become harder to manage for complex async flows compared to Redux/React Query.
+- No TypeScript: Speeds up development, but reduces type safety and long-term maintainability for larger teams.
+- Client-only SPA: Fast development and deployment (Vercel), yet lacks server-side rendering (SEO and first-load performance trade-offs).
+- Tailwind utility classes: Fast UI iterations, but can cause verbose markup and inconsistent styling if not disciplined.
+
+Accessibility notes
+-------------------
+- Use semantic HTML for forms and lists — existing components should ensure `label` elements are associated with inputs.
+- Keyboard navigation: Ensure interactive elements (buttons, links, inputs) are reachable via Tab and have visible focus styles.
+- Color contrast: Verify text/background contrast meets WCAG AA. Prefer variables in `tailwind.config.js` for accessible palettes.
+- ARIA: Add `aria-label`, `aria-labelledby`, or `role` when semantic elements don't convey meaning.
+- Form error handling: Expose errors to screen readers using `aria-live="polite"` and clear, specific messages.
+- Test with tools: Run axe, Lighthouse, or NVDA/VoiceOver for manual checks.
+
+Improvements beyond requirements
+--------------------------------
+- TypeScript migration for stronger typing and fewer runtime bugs.
+- Add automated tests:
+  - Unit tests for components and context (Jest + React Testing Library).
+  - End-to-end tests (Cypress) for critical flows (create/edit/delete invoice).
+- Accessibility-first improvements: keyboard-first design, focus management, and continuous a11y checks in CI.
+- Performance & UX:
+  - Code-splitting for route-level bundles.
+  - Persist invoices in a backend or local DB (IndexedDB) with sync support.
+- Developer experience:
+  - Storybook for component development and visual regression.
+  - Prettier/ESLint rules and GitHub Actions for linting and tests on PRs.
+
+Where to look next
+- Main app entry: [src/main.jsx](src/main.jsx#L1)
+- Invoice logic: [src/context/InvoiceContext.jsx](src/context/InvoiceContext.jsx#L1)
+- Page views: [src/pages/Invoice.jsx](src/pages/Invoice.jsx#L1)
+
+If you'd like, I can add a small CONTRIBUTING or developer setup section, wire up tests, or run an a11y audit next.
