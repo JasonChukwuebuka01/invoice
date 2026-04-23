@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, use } from 'react';
 import InvoiceItemInput from './InvoiceItemInput';
 import { FormInput } from '../helper/FormInput';
 import { CustomSelect } from '../helper/CustomSelect';
 import { useInvoices } from '../../context/InvoiceContext';
 
-const FormComponent = ({ setIsFormOpen }) => {
+const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
     const { addInvoice } = useInvoices();
 
     const [formData, setFormData] = useState({
@@ -21,6 +21,15 @@ const FormComponent = ({ setIsFormOpen }) => {
 
     const addItemBtnRef = useRef(null); // This is your scroll container
     const newItemRef = useRef(null);   // This is the auto-focus target
+    const firstInputRef = useRef(null); // Focus the first input when form opens
+
+    useEffect(() => {
+        if (isFormOpen && firstInputRef.current) {
+            firstInputRef.current.focus();
+        }
+    }, [isFormOpen]);
+
+
 
     // Handle Scroll + Focus Logic
     useEffect(() => {
@@ -42,11 +51,19 @@ const FormComponent = ({ setIsFormOpen }) => {
         }
     }, [number, lastAddedItemId]);
 
+
+
+
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
     };
+
+
+
+
 
     const handleItemChange = (idx, e) => {
         const { name, value } = e.target;
@@ -54,6 +71,10 @@ const FormComponent = ({ setIsFormOpen }) => {
         newItems[idx] = { ...newItems[idx], [name]: name === 'name' ? value : Number(value) };
         setFormData(prev => ({ ...prev, items: newItems }));
     };
+
+
+
+
 
     const handleNewItemButtonClick = () => {
         const newId = Date.now();
@@ -64,6 +85,10 @@ const FormComponent = ({ setIsFormOpen }) => {
             items: [...prev.items, { id: newId, name: '', qty: 1, price: 0 }]
         }));
     };
+
+
+
+
 
     const validateForm = () => {
         let newErrors = {};
@@ -104,9 +129,16 @@ const FormComponent = ({ setIsFormOpen }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+
+
+
     const calculateTotal = () => {
         return formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
     };
+
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -121,6 +153,10 @@ const FormComponent = ({ setIsFormOpen }) => {
         }
     };
 
+
+
+
+
     const handleSaveDraft = () => {
         const finalData = {
             ...formData,
@@ -131,6 +167,10 @@ const FormComponent = ({ setIsFormOpen }) => {
         setIsFormOpen(false);
     };
 
+
+
+
+
     return (
         <div className="relative flex flex-col h-full -m-10 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]">
             <div ref={addItemBtnRef} className="flex-1 overflow-y-auto p-8 md:p-14 custom-scrollbar">
@@ -138,7 +178,7 @@ const FormComponent = ({ setIsFormOpen }) => {
                     {/* Bill From */}
                     <fieldset className="flex flex-col gap-6">
                         <legend className="text-purple-main font-bold text-[13px] mb-6">Bill From</legend>
-                        <FormInput label="Street Address" name="senderStreet" value={formData.senderStreet} error={errors.senderStreet} onChange={handleInputChange} />
+                        <FormInput label="Street Address" name="senderStreet" value={formData.senderStreet} error={errors.senderStreet} onChange={handleInputChange} ref={firstInputRef} />
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                             <FormInput label="City" name="senderCity" value={formData.senderCity} error={errors.senderCity} onChange={handleInputChange} />
                             <FormInput label="Post Code" name="senderPostCode" value={formData.senderPostCode} error={errors.senderPostCode} onChange={handleInputChange} />

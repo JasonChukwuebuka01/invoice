@@ -98,7 +98,7 @@ export default function InvoiceHeader({ count }) {
                 <div className="absolute inset-0 bg-black/50 lg:left-[103px]" onClick={() => setIsFormOpen(false)}></div>
                 <section className={`absolute top-0 bottom-0 left-0 lg:left-[103px] w-full max-w-[719px] bg-white dark:bg-[#141625] overflow-y-auto p-8 md:p-14 md:rounded-r-[20px] shadow-2xl transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isFormOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <h2 className="text-2xl font-bold text-[#0C0E17] dark:text-white mb-14">New Invoice</h2>
-                    <FormComponent setIsFormOpen={setIsFormOpen} />
+                    <FormComponent setIsFormOpen={setIsFormOpen} isFormOpen={isFormOpen} />
                 </section>
             </div>
         </header>
