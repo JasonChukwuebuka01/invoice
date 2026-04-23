@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, use } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Removed unused 'use' import
 import InvoiceItemInput from './InvoiceItemInput';
 import { FormInput } from '../helper/FormInput';
 import { CustomSelect } from '../helper/CustomSelect';
@@ -6,6 +6,7 @@ import { useInvoices } from '../../context/InvoiceContext';
 
 const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
     const { addInvoice } = useInvoices();
+    const formContainerRef = useRef(null); // Ref for focus trapping
 
     const [formData, setFormData] = useState({
         senderStreet: '', senderCity: '', senderPostCode: '', senderCountry: '',
@@ -19,28 +20,59 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
     const [number, setNumber] = useState(0);
     const [lastAddedItemId, setLastAddedItemId] = useState(null);
 
-    const addItemBtnRef = useRef(null); // This is your scroll container
-    const newItemRef = useRef(null);   // This is the auto-focus target
-    const firstInputRef = useRef(null); // Focus the first input when form opens
+    const addItemBtnRef = useRef(null);
+    const newItemRef = useRef(null);
+    const firstInputRef = useRef(null);
 
+    // Accessibility: Trap Focus and Handle ESC
     useEffect(() => {
-        if (isFormOpen && firstInputRef.current) {
-            firstInputRef.current.focus();
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setIsFormOpen(false);
+            }
+
+            if (e.key === 'Tab' && formContainerRef.current) {
+                const focusableElements = formContainerRef.current.querySelectorAll(
+                    'button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey) { // Shift + Tab
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        };
+
+        if (isFormOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+            // Disable body scroll when form is open
+            document.body.style.overflow = 'hidden';
+            if (firstInputRef.current) firstInputRef.current.focus();
         }
-    }, [isFormOpen]);
 
-
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isFormOpen, setIsFormOpen]);
 
     // Handle Scroll + Focus Logic
     useEffect(() => {
         if (number > 0 && addItemBtnRef.current) {
-            // 1. Scroll to the bottom of the container
             addItemBtnRef.current.scrollTo({
                 top: addItemBtnRef.current.scrollHeight,
                 behavior: 'smooth'
             });
 
-            // 2. Focus the input after scroll finishes
             const focusTimeout = setTimeout(() => {
                 if (newItemRef.current) {
                     newItemRef.current.focus();
@@ -51,19 +83,11 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
         }
     }, [number, lastAddedItemId]);
 
-
-
-
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
     };
-
-
-
-
 
     const handleItemChange = (idx, e) => {
         const { name, value } = e.target;
@@ -71,10 +95,6 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
         newItems[idx] = { ...newItems[idx], [name]: name === 'name' ? value : Number(value) };
         setFormData(prev => ({ ...prev, items: newItems }));
     };
-
-
-
-
 
     const handleNewItemButtonClick = () => {
         const newId = Date.now();
@@ -85,10 +105,6 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
             items: [...prev.items, { id: newId, name: '', qty: 1, price: 0 }]
         }));
     };
-
-
-
-
 
     const validateForm = () => {
         let newErrors = {};
@@ -129,16 +145,9 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-
-
-
     const calculateTotal = () => {
         return formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
     };
-
-
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -153,10 +162,6 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
         }
     };
 
-
-
-
-
     const handleSaveDraft = () => {
         const finalData = {
             ...formData,
@@ -167,12 +172,13 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
         setIsFormOpen(false);
     };
 
-
-
-
-
     return (
-        <div className="relative flex flex-col h-full -m-10 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]">
+        <div
+            ref={formContainerRef}
+            className="relative flex flex-col h-full -m-10 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]"
+            role="dialog"
+            aria-modal="true"
+        >
             <div ref={addItemBtnRef} className="flex-1 overflow-y-auto p-8 md:p-14 custom-scrollbar">
                 <form className="flex flex-col gap-12 pb-32">
                     {/* Bill From */}
@@ -248,8 +254,6 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
 
             {/* Footer Buttons */}
             <div className="absolute lg:fixed bottom-0 left-0 w-full px-8 pb-7 pt-7 lg:pb-4 md:p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] transition-colors duration-300">
-
-                {/* Updated Discard Button */}
                 <button
                     type="button"
                     onClick={() => setIsFormOpen(false)}
@@ -259,7 +263,6 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
                 </button>
 
                 <div className="flex gap-2 md:gap-3">
-                    {/* Save as Draft */}
                     <button
                         type="button"
                         onClick={handleSaveDraft}
@@ -268,7 +271,6 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
                         Save as Draft
                     </button>
 
-                    {/* Save & Send */}
                     <button
                         type="button"
                         onClick={handleSubmit}

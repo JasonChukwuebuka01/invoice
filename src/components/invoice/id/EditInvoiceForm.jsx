@@ -13,23 +13,62 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
     const sidePanelRef = useRef(null);
     const firstInputRef = useRef(null);
 
-
+    // 1. Accessibility: Handle ESC key and Focus Trapping
     useEffect(() => {
-        if (isOpen && firstInputRef.current) {
-            firstInputRef.current.focus();
-        }
-    }, [isOpen]);
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setIsOpen(false);
+            }
 
+            if (e.key === 'Tab' && sidePanelRef.current) {
+                const focusableElements = sidePanelRef.current.querySelectorAll(
+                    'button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                const firstElement = focusableElements[0];
+                const lastElement = focusableElements[focusableElements.length - 1];
+
+                if (e.shiftKey) { // Shift + Tab
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        };
+
+        if (isOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+            if (firstInputRef.current) {
+                firstInputRef.current.focus();
+            }
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen, setIsOpen]);
+
+    // Update form data when initialData changes
     useEffect(() => {
         if (initialData) setFormData(initialData);
     }, [initialData, isOpen]);
 
+    // Reset scroll to top when opening
     useEffect(() => {
         if (isOpen && sidePanelRef.current) {
             sidePanelRef.current.scrollTo(0, 0);
         }
     }, [isOpen]);
 
+    // Scroll to bottom when adding new items
     useEffect(() => {
         if (scrollTrigger > 0 && sidePanelRef.current) {
             sidePanelRef.current.scrollTo({
@@ -136,30 +175,31 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
         e.preventDefault();
         if (validateForm()) {
             const newTotal = formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
-
-            // 1. Check if the status is currently 'draft'
-            // 2. If so, update it to 'pending'
             const updatedStatus = formData.status === 'draft' ? 'pending' : formData.status;
 
             const finalData = {
                 ...formData,
                 total: newTotal,
-                status: updatedStatus // Apply the status change here
+                status: updatedStatus
             };
 
             updateInvoice(formData.id, finalData);
             setIsOpen(false);
         }
     };
+
     return (
         <>
             <div
                 className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-500 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsOpen(false)}
+                aria-hidden="true"
             />
 
             <aside
                 ref={sidePanelRef}
+                role="dialog"
+                aria-modal="true"
                 className={`fixed top-0 left-0 h-full lg:left-[103px] w-full max-w-[719px] bg-white dark:bg-[#141625] z-50 transition-transform duration-500 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto custom-scrollbar`}
             >
                 <div className="p-8 md:p-14 pb-32">
@@ -261,7 +301,7 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
 
                 <div className="sticky bottom-0 w-full p-8 bg-white dark:bg-[#141625] flex justify-end items-center gap-2 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]">
                     <button type="button" onClick={() => setIsOpen(false)} className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-6 py-4 rounded-full font-bold text-[15px] hover:bg-[#DFE3FA] dark:hover:bg-white dark:hover:text-[#7E88C3] transition-all">Cancel</button>
-                    <button type="submit" onClick={handleSaveChanges} className="bg-purple-main text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-purple-hover transition-all">Save Changes</button>
+                    <button type="button" onClick={handleSaveChanges} className="bg-purple-main text-white px-6 py-4 rounded-full font-bold text-[15px] hover:bg-purple-hover transition-all">Save Changes</button>
                 </div>
             </aside>
         </>
