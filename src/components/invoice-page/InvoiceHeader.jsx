@@ -5,6 +5,7 @@ import { useTheme } from '../../context/themeContext';
 import FormComponent from './FormComponent';
 
 export default function InvoiceHeader({ count }) {
+
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const { theme } = useTheme();
@@ -12,6 +13,10 @@ export default function InvoiceHeader({ count }) {
     const [searchParams, setSearchParams] = useSearchParams();
     const currentStatuses = searchParams.get('status')?.split(',') || [];
     const statuses = ['All', 'Draft', 'Pending', 'Paid'];
+
+
+
+
 
     const handleStatusChange = (status) => {
         if (status === 'All') {
@@ -34,6 +39,10 @@ export default function InvoiceHeader({ count }) {
         }
         setSearchParams(searchParams);
     };
+
+
+
+
 
     return (
         <header className="flex items-center justify-between mb-8 lg:mb-16">

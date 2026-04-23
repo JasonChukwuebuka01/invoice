@@ -53,7 +53,7 @@ export default function InvoiceDetails() {
 
   return (
     <main
-      className="min-h-screen flex-1 lg:pb-[900px] bg-[#F8F8FB] dark:bg-[#141625] pt-[72px] md:pt-[80px] lg:pt-[72px] pb-12 px-4 md:px-10 lg:px-[20%] transition-colors duration-300 relative"
+      className="min-h-screen relative overflow-hidden flex-1 pb-[100px] lg:pb-[900px] bg-[#F8F8FB] dark:bg-[#141625] pt-[72px] md:pt-[80px] lg:pt-[72px] pb-12 px-2 md:px-10 lg:px-[20%] transition-colors duration-300 "
     >
       {/* Modals are portaled or absolute/fixed anyway, so they stay here */}
       <DeleteModal
@@ -79,7 +79,7 @@ export default function InvoiceDetails() {
         </span>
       </Link>
 
-      <header className="bg-white dark:bg-[#1E2139] p-6 md:px-8 md:py-5 rounded-lg flex items-center justify-between shadow-sm mb-4 md:mb-6 transition-colors duration-300">
+      <header className="bg-[#F8F8FB] dark:bg-[#1E2139] p-6 md:px-8 md:py-5 rounded-lg flex items-center justify-between shadow-sm mb-4 md:mb-6 transition-colors duration-300">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-5">
           <span className="text-[#858BB2] dark:text-[#DFE3FA] text-[13px]">Status</span>
           <div
@@ -106,7 +106,7 @@ export default function InvoiceDetails() {
         </div>
       </header>
 
-      <article className="bg-white dark:bg-[#1E2139] p-6 md:p-12 rounded-lg shadow-sm transition-colors duration-300 mb-6">
+      <article className="bg-[#F8F8FB] dark:bg-[#1E2139] p-6 md:p-12 rounded-lg shadow-sm transition-colors duration-300 mb-6">
         <section className="flex flex-col md:flex-row justify-between gap-8 mb-10 md:mb-12">
           <div>
             <h1 className="text-[#0C0E17] dark:text-white font-bold text-base md:text-[20px] mb-1 uppercase tracking-tight">
@@ -153,7 +153,7 @@ export default function InvoiceDetails() {
 
         <section
           ref={invoiceDetailsContainer}
-          className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-6 md:p-8 transition-colors duration-300"
+          className="rounded-t-lg overflow-hidden bg-[#F8F8FB] dark:bg-[#252945] p-6 md:p-8 transition-colors duration-300"
         >
           <div className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr] mb-8 text-[#7E88C3] dark:text-[#DFE3FA] text-[13px]">
             <span>Item Name</span>
@@ -178,7 +178,7 @@ export default function InvoiceDetails() {
       </article>
 
       {/* MOBILE FOOTER: Removed fixed, left-0, w-full. Now it follows the parent's padding */}
-      <footer className="md:hidden bg-white dark:bg-[#1E2139] p-6 rounded-lg flex justify-center items-center gap-2 shadow-sm transition-colors duration-300">
+      <footer className="fixed w-full left-0 bottom-0 md:hidden bg-[#F8F8FB] dark:bg-[#1E2139] p-6 rounded-lg flex justify-center items-center gap-2 shadow-sm transition-colors duration-300">
         <button onClick={() => setIsEditOpen(true)} className="flex-1 bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] py-4 rounded-full font-bold text-[13px]">
           Edit
         </button>

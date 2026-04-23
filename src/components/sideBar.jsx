@@ -4,15 +4,14 @@ import profileAvatar from '../assets/profile-avatar.png';
 
 export default function Sidebar() {
 
-    
+
     const { theme, toggleTheme } = useTheme();
 
 
 
     return (
         <aside
-            // FIX: Design uses a darker BG (#373B53) in Light mode for contrast, but stays dark.
-            className="fixed top-0 left-0 z-500 flex flex-row lg:flex-col bg-[#373B53] dark:bg-[#1E2139] w-full h-[72px] md:h-[80px] lg:h-screen lg:w-[103px] transition-all duration-300 items-center justify-between overflow-hidden"
+            className="fixed top-0 left-0 z-500  flex flex-row lg:flex-col bg-[#373B53] dark:bg-[#1E2139] w-full h-[72px] md:h-[80px] lg:h-screen lg:w-[103px] transition-all duration-300 items-center justify-between overflow-hidden"
             role="complementary"
         >
             {/* Logo Section */}

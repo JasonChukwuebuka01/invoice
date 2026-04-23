@@ -16,7 +16,7 @@ export default function InvoiceCard({ invoice }) {
 
     return (
         <article
-            className="group grid grid-cols-2 sm:grid-cols-[80px_150px_1fr_auto_140px_auto] items-center bg-white dark:bg-[#1E2139] p-6 sm:py-4 sm:px-8 rounded-lg shadow-sm mb-4 border border-transparent hover:border-[#7C5DFA] transition-all duration-300 cursor-pointer outline-none"
+            className="group grid grid-cols-2 sm:grid-cols-[80px_150px_1fr_auto_140px_auto] items-center bg-[#F8F8FB] dark:bg-[#1E2139] p-6 sm:py-4 sm:px-8 rounded-lg shadow-sm mb-4 border border-transparent hover:border-[#7C5DFA] transition-all duration-300 cursor-pointer outline-none"
             tabIndex="0"
         >
             {/* -ID (Top Left Mobile / Far Left Desktop) --- */}
