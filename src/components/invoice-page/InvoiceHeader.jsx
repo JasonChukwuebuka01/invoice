@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Route, useSearchParams } from 'react-router-dom';
 import iconPlus from '../../assets/invoice-plus-sign.png';
 import { useTheme } from '../../context/themeContext';
 import FormComponent from './FormComponent';
@@ -15,11 +15,6 @@ export default function InvoiceHeader({ count }) {
     const statuses = ['All', 'Draft', 'Pending', 'Paid'];
 
 
-    useEffect(() => {
-        if (isFilterOpen)
-            setIsFilterOpen(false);
-
-    }, [])
 
 
     const handleStatusChange = (status) => {
@@ -76,24 +71,34 @@ export default function InvoiceHeader({ count }) {
                         </svg>
                     </button>
 
-                    {isFilterOpen && (
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[192px] z-40">
-                            {/* Dropdown Box: White in light, Navy in dark */}
-                            <div className="bg-white dark:bg-[#252945] rounded-lg shadow-2xl p-6 transition-colors duration-300">
-                                {statuses.map(s => (
-                                    <label key={s} className="flex items-center gap-3 mb-4 last:mb-0 cursor-pointer group font-bold text-[13px] text-[#0C0E17] dark:text-white hover:text-purple-main transition-colors">
-                                        <input
-                                            type="checkbox"
-                                            className="accent-purple-main w-4 h-4 cursor-pointer"
-                                            checked={s === 'All' ? currentStatuses.length === 0 : currentStatuses.includes(s.toLowerCase())}
-                                            onChange={() => handleStatusChange(s)}
-                                        />
-                                        {s}
-                                    </label>
-                                ))}
+                    {
+                        isFilterOpen && (
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[192px] z-40">
+                                {/* Dropdown Box: White in light, Navy in dark */}
+                                <div className="bg-white dark:bg-[#252945] rounded-lg shadow-2xl p-6 transition-colors duration-300">
+                                    {statuses.map(s => (
+                                        <label key={s} className="flex items-center gap-3 mb-4 last:mb-0 cursor-pointer group font-bold text-[13px] text-[#0C0E17] dark:text-white hover:text-purple-main transition-colors">
+                                            <input
+                                                type="checkbox"
+                                                className="accent-purple-main w-4 h-4 cursor-pointer"
+                                                checked={s === 'All' ? currentStatuses.length === 0 : currentStatuses.includes(s.toLowerCase())}
+                                                onChange={() => handleStatusChange(s)}
+                                            />
+                                            {s}
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )
+                    }
+
+                    {/* Dark Overlay */}
+                    <div
+                        className="absolute inset-0 bg-black/10 z-30"
+                        onClick={() => setIsFilterOpen(false)}
+                        aria-hidden="true"
+                    />
+
                 </div>
 
                 {/* New Invoice Button */}
