@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useInvoices } from '../context/InvoiceContext';
-import { useTheme } from '../context/themeContext'; // Added theme hook
+import { useTheme } from '../context/themeContext';
 import EmptyState from '../components/invoice-page/EmptyState';
 import InvoiceItemRow from '../components/invoice/id/InvoiceItemRow';
 import EditInvoiceForm from '../components/invoice/id/EditInvoiceForm';
@@ -11,7 +11,7 @@ export default function InvoiceDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { invoices, deleteInvoice, markAsPaid } = useInvoices();
-  const { theme } = useTheme(); // Access current theme
+  const { theme } = useTheme();
 
   const invoiceDetailsContainer = useRef(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -40,12 +40,10 @@ export default function InvoiceDetails() {
     return <EmptyState showReset={true} />;
   }
 
-  // Dynamic Status Color Logic - Updated for theme awareness
   const statusColors = {
     paid: { bg: 'rgba(51, 214, 159, 0.06)', text: '#33D69F' },
     pending: { bg: 'rgba(255, 143, 0, 0.06)', text: '#FF8F00' },
     draft: {
-      // Draft text color shifts based on theme
       bg: theme === 'light' ? 'rgba(55, 59, 83, 0.06)' : 'rgba(223, 227, 250, 0.06)',
       text: theme === 'light' ? '#373B53' : '#DFE3FA'
     }
@@ -55,8 +53,9 @@ export default function InvoiceDetails() {
 
   return (
     <main
-      className="min-h-screen bg-[#F8F8FB] dark:bg-[#141625] pt-[72px] md:pt-[80px] lg:pt-[72px] pb-32 px-4 md:px-10 lg:px-[20%] transition-colors duration-300 relative"
+      className="min-h-screen flex-1 lg:pb-[900px] bg-[#F8F8FB] dark:bg-[#141625] pt-[72px] md:pt-[80px] lg:pt-[72px] pb-12 px-4 md:px-10 lg:px-[20%] transition-colors duration-300 relative"
     >
+      {/* Modals are portaled or absolute/fixed anyway, so they stay here */}
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -71,7 +70,6 @@ export default function InvoiceDetails() {
         onItemAdded={() => setScrollTrigger(prev => prev + 1)}
       />
 
-      {/* Navigation */}
       <Link to="/" className="flex items-center gap-6 mb-8 mt-8 group w-fit">
         <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg">
           <path d="M6.342.886L2.114 5.114l4.228 4.228" stroke="#9277FF" strokeWidth="2" fill="none" />
@@ -81,7 +79,6 @@ export default function InvoiceDetails() {
         </span>
       </Link>
 
-      {/* Top Action Bar */}
       <header className="bg-white dark:bg-[#1E2139] p-6 md:px-8 md:py-5 rounded-lg flex items-center justify-between shadow-sm mb-4 md:mb-6 transition-colors duration-300">
         <div className="flex items-center justify-between w-full md:w-auto md:gap-5">
           <span className="text-[#858BB2] dark:text-[#DFE3FA] text-[13px]">Status</span>
@@ -109,8 +106,7 @@ export default function InvoiceDetails() {
         </div>
       </header>
 
-      {/* Main Content Card */}
-      <article className="bg-white dark:bg-[#1E2139] p-6 md:p-12 rounded-lg shadow-sm transition-colors duration-300">
+      <article className="bg-white dark:bg-[#1E2139] p-6 md:p-12 rounded-lg shadow-sm transition-colors duration-300 mb-6">
         <section className="flex flex-col md:flex-row justify-between gap-8 mb-10 md:mb-12">
           <div>
             <h1 className="text-[#0C0E17] dark:text-white font-bold text-base md:text-[20px] mb-1 uppercase tracking-tight">
@@ -155,7 +151,6 @@ export default function InvoiceDetails() {
           </div>
         </section>
 
-        {/* Item List Table */}
         <section
           ref={invoiceDetailsContainer}
           className="rounded-t-lg overflow-hidden bg-[#F9FAFE] dark:bg-[#252945] p-6 md:p-8 transition-colors duration-300"
@@ -174,7 +169,6 @@ export default function InvoiceDetails() {
           </ul>
         </section>
 
-        {/* Total Banner */}
         <footer className="bg-[#373B53] dark:bg-[#0C0E17] p-6 md:px-8 flex items-center justify-between rounded-b-lg transition-colors duration-300">
           <span className="text-white text-[13px]">Amount Due</span>
           <span className="text-white font-bold text-[20px] md:text-[24px]">
@@ -183,8 +177,8 @@ export default function InvoiceDetails() {
         </footer>
       </article>
 
-      {/* Mobile Footer Buttons */}
-      <footer className="md:hidden fixed bottom-0 left-0 w-full bg-white dark:bg-[#1E2139] p-6 flex justify-center items-center gap-2 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] z-30 transition-colors duration-300">
+      {/* MOBILE FOOTER: Removed fixed, left-0, w-full. Now it follows the parent's padding */}
+      <footer className="md:hidden bg-white dark:bg-[#1E2139] p-6 rounded-lg flex justify-center items-center gap-2 shadow-sm transition-colors duration-300">
         <button onClick={() => setIsEditOpen(true)} className="flex-1 bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] py-4 rounded-full font-bold text-[13px]">
           Edit
         </button>
