@@ -18,7 +18,7 @@ export default function Sidebar() {
                 <img
                     src={invoiceLogo}
                     alt="Logo"
-                    className="relative z-10 h-[26px] w-[28px] lg:h-[40px] lg:w-[40px] object-contain"
+                    className="relative z-10 h-[45px] w-[45px] lg:h-[60px] lg:w-[60px] object-contain"
                 />
             </div>
 
