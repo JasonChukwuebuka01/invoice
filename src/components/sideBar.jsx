@@ -3,7 +3,11 @@ import invoiceLogo from '../assets/invoice-logo.png';
 import profileAvatar from '../assets/profile-avatar.png';
 
 export default function Sidebar() {
+
+    
     const { theme, toggleTheme } = useTheme();
+
+
 
     return (
         <aside
