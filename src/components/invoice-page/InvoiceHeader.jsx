@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Route, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import iconPlus from '../../assets/invoice-plus-sign.png';
 import { useTheme } from '../../context/themeContext';
 import FormComponent from './FormComponent';
 
 export default function InvoiceHeader({ count }) {
-
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const { theme } = useTheme();
@@ -14,9 +13,13 @@ export default function InvoiceHeader({ count }) {
     const currentStatuses = searchParams.get('status')?.split(',') || [];
     const statuses = ['All', 'Draft', 'Pending', 'Paid'];
 
+    
+    useEffect(() => {
+        setIsFilterOpen(false);
+    }, []);
 
 
-
+    
     const handleStatusChange = (status) => {
         if (status === 'All') {
             searchParams.delete('status');
@@ -39,15 +42,10 @@ export default function InvoiceHeader({ count }) {
         setSearchParams(searchParams);
     };
 
-
-
-
-
     return (
         <header className="flex items-center justify-between mb-8 lg:mb-16">
             <div className="flex items-center gap-4 sm:gap-6">
                 <div>
-                    {/* Updated text color for Light Mode contrast */}
                     <h1 className="text-2xl lg:text-[36px] font-bold tracking-tight text-[#0C0E17] dark:text-white transition-colors duration-300">
                         Invoices
                     </h1>
@@ -64,41 +62,34 @@ export default function InvoiceHeader({ count }) {
                     onMouseEnter={() => setIsFilterOpen(true)}
                     onMouseLeave={() => setIsFilterOpen(false)}
                 >
-                    <button className="font-bold text-[13px] text-[#0C0E17] dark:text-white flex items-center gap-3 py-2 outline-none group">
+                    <button
+                        // Toggle onClick specifically for mobile/touch users
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                        className="font-bold text-[13px] text-[#0C0E17] dark:text-white flex items-center gap-3 py-2 outline-none group"
+                    >
                         Filter <span className="hidden sm:inline">by status</span>
                         <svg width="11" height="7" className={`transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`}>
                             <path d="M1 1l4.225 4.225L9.45 1" stroke="#7C5DFA" strokeWidth="2" fill="none" />
                         </svg>
                     </button>
 
-                    {
-                        isFilterOpen && (
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[192px] z-40">
-                                {/* Dropdown Box: White in light, Navy in dark */}
-                                <div className="bg-white dark:bg-[#252945] rounded-lg shadow-2xl p-6 transition-colors duration-300">
-                                    {statuses.map(s => (
-                                        <label key={s} className="flex items-center gap-3 mb-4 last:mb-0 cursor-pointer group font-bold text-[13px] text-[#0C0E17] dark:text-white hover:text-purple-main transition-colors">
-                                            <input
-                                                type="checkbox"
-                                                className="accent-purple-main w-4 h-4 cursor-pointer"
-                                                checked={s === 'All' ? currentStatuses.length === 0 : currentStatuses.includes(s.toLowerCase())}
-                                                onChange={() => handleStatusChange(s)}
-                                            />
-                                            {s}
-                                        </label>
-                                    ))}
-                                </div>
+                    {isFilterOpen && (
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[192px] z-40">
+                            <div className="bg-white dark:bg-[#252945] rounded-lg shadow-2xl p-6 transition-colors duration-300">
+                                {statuses.map(s => (
+                                    <label key={s} className="flex items-center gap-3 mb-4 last:mb-0 cursor-pointer group font-bold text-[13px] text-[#0C0E17] dark:text-white hover:text-purple-main transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            className="accent-purple-main w-4 h-4 cursor-pointer"
+                                            checked={s === 'All' ? currentStatuses.length === 0 : currentStatuses.includes(s.toLowerCase())}
+                                            onChange={() => handleStatusChange(s)}
+                                        />
+                                        {s}
+                                    </label>
+                                ))}
                             </div>
-                        )
-                    }
-
-                    {/* Dark Overlay */}
-                    <div
-                        className="absolute inset-0 bg-black/10 z-30"
-                        onClick={() => setIsFilterOpen(false)}
-                        aria-hidden="true"
-                    />
-
+                        </div>
+                    )}
                 </div>
 
                 {/* New Invoice Button */}
