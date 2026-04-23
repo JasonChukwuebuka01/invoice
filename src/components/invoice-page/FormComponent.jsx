@@ -220,9 +220,7 @@ const FormComponent = ({ setIsFormOpen, isFormOpen }) => {
                                     { label: 'Net 30 Days', value: '30' }
                                 ]}
                             />
-                            <svg width="11" height="7" className="absolute right-4 bottom-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 1l4.225 4.225L9.45 1" stroke="#7C5DFA" strokeWidth="2" fill="none" />
-                            </svg>
+                            
                         </div>
                         <FormInput label="Project Description" name="projectDescription" placeholder="e.g. Graphic Design Service" value={formData.projectDescription} error={errors.projectDescription} onChange={handleInputChange} gridClass="md:col-span-2" />
                     </fieldset>

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FormInput } from '../../helper/FormInput';
 import { useInvoices } from '../../../context/InvoiceContext';
+import { CustomSelect } from '../../helper/CustomSelect';
 
 export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItemAdded }) {
     const { updateInvoice } = useInvoices();
@@ -180,11 +181,11 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
             const newTotal = formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
             const updatedStatus = formData.status === 'draft' ? 'pending' : formData.status;
 
-            
+
             const baseDate = new Date(formData.createdAt);
-            
-            
-           
+
+
+
             const finalData = {
                 ...formData,
                 total: newTotal,
@@ -246,17 +247,16 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
                             <FormInput label="Invoice Date" name="createdAt" type="date" value={formData?.createdAt} onChange={handleChange} error={errors.createdAt} />
                             <div className="flex flex-col gap-2">
                                 <label className="text-[13px] font-medium text-[#7E88C3] dark:text-[#DFE3FA]">Payment Terms</label>
-                                <select
-                                    name="paymentTerms"
-                                    value={formData?.paymentTerms}
+                                <CustomSelect
+                                    value={formData.paymentTerms}
                                     onChange={handleChange}
-                                    className="w-full p-4 rounded-md border font-bold text-[13px] outline-none bg-white dark:bg-[#1E2139] dark:text-white border-[#DFE3FA] dark:border-[#252945] focus:border-[#7C5DFA] appearance-none cursor-pointer"
-                                >
-                                    <option value={1}>Net 1 Day</option>
-                                    <option value={7}>Net 7 Days</option>
-                                    <option value={14}>Net 14 Days</option>
-                                    <option value={30}>Net 30 Days</option>
-                                </select>
+                                    options={[
+                                        { label: 'Net 1 Day', value: '1' },
+                                        { label: 'Net 7 Days', value: '7' },
+                                        { label: 'Net 14 Days', value: '14' },
+                                        { label: 'Net 30 Days', value: '30' }
+                                    ]}
+                                />
                             </div>
                         </div>
 

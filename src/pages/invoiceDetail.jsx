@@ -53,7 +53,7 @@ export default function InvoiceDetails() {
 
   return (
     <main
-      className="min-h-screen relative overflow-hidden flex-1 pb-[100px] lg:pb-[900px] bg-[#F8F8FB] dark:bg-[#141625] pt-[72px] md:pt-[80px] lg:pt-[72px] pb-12 px-2 md:px-10 lg:px-[20%] transition-colors duration-300 "
+      className="min-h-screen  lg:h-[160vh] relative flex-1 pb-[100px] bg-[#F8F8FB] dark:bg-[#141625] pt-[72px] md:pt-[80px] lg:pt-[72px] pb-12 px-2 md:px-10 lg:px-[20%] transition-colors duration-300 "
     >
       {/* Modals are portaled or absolute/fixed anyway, so they stay here */}
       <DeleteModal
