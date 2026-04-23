@@ -13,7 +13,10 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
     const sidePanelRef = useRef(null);
     const firstInputRef = useRef(null);
 
-    // 1. Accessibility: Handle ESC key and Focus Trapping
+
+
+
+    // Accessibility: Handle ESC key and Focus Trapping
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
@@ -177,18 +180,16 @@ export default function EditInvoiceForm({ isOpen, setIsOpen, initialData, onItem
             const newTotal = formData.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
             const updatedStatus = formData.status === 'draft' ? 'pending' : formData.status;
 
-            // Recalculate paymentDue based on Invoice Date (createdAt) and Terms
-            const baseDate = new Date(formData.createdAt);
-            const daysToAdd = Number(formData.paymentTerms);
             
-            baseDate.setDate(baseDate.getDate() + daysToAdd);
-            const newPaymentDue = baseDate.toISOString().split('T')[0];
-
+            const baseDate = new Date(formData.createdAt);
+            
+            
+           
             const finalData = {
                 ...formData,
                 total: newTotal,
                 status: updatedStatus,
-                invoiceDate: newPaymentDue 
+                invoiceDate: baseDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
             };
 
             updateInvoice(formData.id, finalData);
