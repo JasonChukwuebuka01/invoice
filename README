@@ -77,4 +77,3 @@ Where to look next
 - Invoice logic: [src/context/InvoiceContext.jsx](src/context/InvoiceContext.jsx#L1)
 - Page views: [src/pages/Invoice.jsx](src/pages/Invoice.jsx#L1)
 
-If you'd like, I can add a small CONTRIBUTING or developer setup section, wire up tests, or run an a11y audit next.
