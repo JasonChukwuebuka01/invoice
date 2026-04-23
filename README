@@ -71,19 +71,6 @@ Accessibility notes
 - Form error handling: Expose errors to screen readers using `aria-live="polite"` and clear, specific messages.
 - Test with tools: Run axe, Lighthouse, or NVDA/VoiceOver for manual checks.
 
-Improvements beyond requirements
---------------------------------
-- TypeScript migration for stronger typing and fewer runtime bugs.
-- Add automated tests:
-  - Unit tests for components and context (Jest + React Testing Library).
-  - End-to-end tests (Cypress) for critical flows (create/edit/delete invoice).
-- Accessibility-first improvements: keyboard-first design, focus management, and continuous a11y checks in CI.
-- Performance & UX:
-  - Code-splitting for route-level bundles.
-  - Persist invoices in a backend or local DB (IndexedDB) with sync support.
-- Developer experience:
-  - Storybook for component development and visual regression.
-  - Prettier/ESLint rules and GitHub Actions for linting and tests on PRs.
 
 Where to look next
 - Main app entry: [src/main.jsx](src/main.jsx#L1)
