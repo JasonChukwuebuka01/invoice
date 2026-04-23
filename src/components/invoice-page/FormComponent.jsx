@@ -132,7 +132,7 @@ const FormComponent = ({ setIsFormOpen }) => {
     };
 
     return (
-        <div className="relative flex flex-col h-full -m-8 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]">
+        <div className="relative flex flex-col h-full -m-10 md:-m-14 overflow-hidden bg-white dark:bg-[#141625]">
             <div ref={addItemBtnRef} className="flex-1 overflow-y-auto p-8 md:p-14 custom-scrollbar">
                 <form className="flex flex-col gap-12 pb-32">
                     {/* Bill From */}
@@ -207,13 +207,13 @@ const FormComponent = ({ setIsFormOpen }) => {
             </div>
 
             {/* Footer Buttons */}
-            <div className="absolute lg:fixed bottom-0 left-0 w-full p-4 pb-7 lg:pb-4 md:p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] transition-colors duration-300">
+            <div className="absolute lg:fixed bottom-0 left-0 w-full px-8 pb-7 pt-7 lg:pb-4 md:p-7 md:px-14 bg-white dark:bg-[#141625] flex justify-between items-center z-20 shadow-[0_-10px_20px_rgba(0,0,0,0.1)] transition-colors duration-300">
 
-                {/* Discard Button */}
+                {/* Updated Discard Button */}
                 <button
                     type="button"
                     onClick={() => setIsFormOpen(false)}
-                    className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-4 md:px-8 py-4 rounded-full font-bold text-[12px] md:text-[13px] hover:bg-[#DFE3FA] transition-all whitespace-nowrap"
+                    className="bg-[#F9FAFE] dark:bg-[#252945] text-[#7E88C3] dark:text-[#DFE3FA] px-4 md:px-8 py-4 rounded-full font-bold text-[12px] md:text-[13px] hover:bg-[#DFE3FA] dark:hover:bg-white dark:hover:text-[#7E88C3] transition-all whitespace-nowrap"
                 >
                     Discard
                 </button>
@@ -225,7 +225,6 @@ const FormComponent = ({ setIsFormOpen }) => {
                         onClick={handleSaveDraft}
                         className="bg-[#373B53] text-[#888EB0] dark:text-[#DFE3FA] px-4 md:px-8 py-4 rounded-full font-bold text-[12px] md:text-[13px] hover:bg-[#0C0E17] transition-all whitespace-nowrap"
                     >
-                        {/* Mobile-friendly text shortening if needed, but px-4 should make it fit */}
                         Save as Draft
                     </button>
 

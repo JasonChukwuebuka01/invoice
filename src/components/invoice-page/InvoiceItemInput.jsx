@@ -73,11 +73,11 @@ const InvoiceItemInput = forwardRef(({ item, index, handleItemChange, removeItem
                 />
             </div>
 
-            {/* Total + Delete */}
-            <div className="flex items-center justify-between sm:grid sm:grid-cols-[1fr_auto] gap-4 h-full">
-                <div className="flex flex-col gap-2 w-full">
+            {/* Total + Delete - FIXED FOR RESPONSIVENESS */}
+            <div className="flex items-center justify-between sm:grid sm:grid-cols-[1fr_auto] gap-4 h-full min-w-0">
+                <div className="flex flex-col gap-2 w-full min-w-0">
                     <label className="text-[#7E88C3] text-[13px] sm:hidden font-medium">Total</label>
-                    <div className="p-4 font-bold text-base sm:text-[13px] text-[#888EB0] dark:text-[#DFE3FA] flex items-center h-[52px] transition-colors duration-300">
+                    <div className="p-4 font-bold text-base sm:text-[13px] text-[#888EB0] dark:text-[#DFE3FA] flex items-center h-[52px] transition-colors duration-300 overflow-hidden text-ellipsis whitespace-nowrap">
                         {total.toFixed(2)}
                     </div>
                 </div>
@@ -85,7 +85,7 @@ const InvoiceItemInput = forwardRef(({ item, index, handleItemChange, removeItem
                 <button
                     type="button"
                     onClick={() => removeItem(index)}
-                    className="group flex items-center justify-center h-[52px] transition-all"
+                    className="group flex items-center justify-center h-[52px] transition-all flex-shrink-0"
                     aria-label="Delete item"
                 >
                     <svg width="13" height="16" xmlns="http://www.w3.org/2000/svg" className="fill-[#888EB0] group-hover:fill-[#EC5757] transition-colors duration-200">
