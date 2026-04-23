@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import iconPlus from '../../assets/invoice-plus-sign.png';
 import { useTheme } from '../../context/themeContext';
@@ -15,7 +15,11 @@ export default function InvoiceHeader({ count }) {
     const statuses = ['All', 'Draft', 'Pending', 'Paid'];
 
 
+    useEffect(() => {
+        if (isFilterOpen)
+            setIsFilterOpen(false);
 
+    }, [])
 
 
     const handleStatusChange = (status) => {
@@ -93,8 +97,8 @@ export default function InvoiceHeader({ count }) {
                 </div>
 
                 {/* New Invoice Button */}
-                <button 
-                    onClick={() => setIsFormOpen(true)} 
+                <button
+                    onClick={() => setIsFormOpen(true)}
                     className="bg-purple-main hover:bg-purple-hover transition-all pl-2 pr-4 py-2 rounded-full flex items-center gap-4 text-white font-bold text-[13px] shadow-lg shadow-purple-main/20"
                 >
                     <img src={iconPlus} alt="" className="w-[30px] h-[30px]" />
