@@ -7,6 +7,7 @@ import InvoiceDetails from './pages/invoiceDetail.jsx';
 import './index.css';
 import { ThemeProvider } from './context/themeContext.jsx';
 import { InvoiceProvider } from './context/InvoiceContext.jsx';
+import EmptyState from './components/invoice-page/EmptyState.jsx';
 
 
 
@@ -23,11 +24,14 @@ const router = createBrowserRouter([
         path: "invoice/:id",
         element: <InvoiceDetails />,
       },
+      // The catch-all route inside the App layout
+      {
+        path: "*",
+        element: <EmptyState showReset={true} />, // You can create a NotFound component for better UX
+      },
     ],
   },
 ]);
-
-
 
 
 createRoot(document.getElementById('root')).render(
